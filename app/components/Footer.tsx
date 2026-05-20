@@ -4,7 +4,7 @@ import { Container } from "./Container";
 const menuSections = [
   { title: "Nomnom", links: ["Home", "Contact us", "Delivery zone"] },
   { title: "Menu", links: ["Appetizers", "Salads", "Pizzas", "Main dishes", "Desserts"] },
-  { title: "", links: ["Side dish", "Brunch", "Desserts", "Beverages", "Fish & Sea foods"] }, // Толгойгүй багана
+  { title: "", links: ["Side dish", "Brunch", "Desserts", "Beverages", "Fish & Sea foods"] },
 ];
 
 const footerLinks = ["Privacy policy", "Terms and condition", "Cookie policy"];
@@ -31,13 +31,13 @@ export default function Footer() {
     </div>
 
     {menuSections.map((section, id) => (
-      <div key={id} className={section.title ? "" : "md:pt-8"}>
+      <div key={id} className={section.title ? "" : "md:pt-10"}>
         {section.title && (
-          <h3 className="text-xs text-gray-500 tracking-widest uppercase mb-4">
+          <h3 className="text-4 text-gray-500 tracking-widest uppercase mb-4">
             {section.title}
           </h3>
         )}
-        <ul className="space-y-3 text-sm font-medium">
+        <ul className="space-y-3 text-4 font-medium">
           {section.links.map((link) => (
             <li key={link}>
               <a href="#" className="hover:text-white transition-colors">{link}</a>
@@ -47,7 +47,7 @@ export default function Footer() {
       </div>
     ))}
     <div>
-      <h3 className="text-xs text-gray-500 tracking-widest uppercase mb-4">Follow us</h3>
+      <h3 className="text-4 text-gray-500 tracking-widest uppercase mb-4">Follow us</h3>
       <div className="flex space-x-4 text-xl">
         <img src="/instagram.svg" alt="Instagram" className="h-6 w-6" />
         <img src="/facebook.svg" alt="Facebook" className="h-6 w-6" />

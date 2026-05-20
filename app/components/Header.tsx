@@ -15,7 +15,7 @@ export default function Header() {
         </div>
       </div>
       <div className="flex gap-3.5">
-        <button className="w-62.75 h-9 bg-white rounded-3xl text-sm ">Delivery address: Add Location</button>
+        <input className="w-62.75 h-9 bg-white rounded-3xl text-sm " placeholder="Delivery address: Add Location" />
         <button className="w-9 h-9 bg-white rounded-3xl cursor-pointer">
             <img src="/shoppingcart.svg" alt="shopping cart" />
         </button>
