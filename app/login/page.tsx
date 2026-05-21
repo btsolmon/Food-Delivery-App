@@ -1,0 +1,98 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { loginAction } from "@/app/actions";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setStatus(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    // Server Action-оо дуудаж хариуг нь авна
+    const result = await loginAction(formData);
+
+    if (result?.error) {
+      setStatus(`✗ ${result.error}`);
+      setLoading(false); // Алдаа гарвал loading-ийг зогсооно
+    } else {
+      // Амжилттай болсон бол 3001 порт руу шилжинэ
+      window.location.href = "http://localhost:3001";
+    }
+  }
+
+  return (
+    <main className="min-h-dvh flex bg-white">
+      {/* Зүүн талын Form хэсэг */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <form onSubmit={onSubmit} className="w-full max-w-sm space-y-6">
+          <div>
+            <h1 className="text-[24px] font-semibold text-black">Log in</h1>
+            <h2 className="text-[16px] text-zinc-500">
+              Log in to enjoy your favorite dishes.
+            </h2>
+          </div>
+          <input
+            name="email"
+            className={`w-full rounded-md border px-3 py-2 text-sm text-black outline-none ${
+              status
+                ? "border-red-500"
+                : "border-zinc-300 focus:border-zinc-500"
+            }`}
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            name="password"
+            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-black text-sm outline-none focus:border-zinc-400"
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {status && <p className="text-sm text-red-500 mt-1">{status}</p>}
+
+          <Link
+            href="/forgot-password"
+            className="text-sm text-black hover:underline"
+          >
+            Forgot password?
+          </Link>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-zinc-300 px-3 py-2 text-sm font-medium text-white disabled:opacity-50 mt-6 "
+          >
+            {loading ? "..." : "Let's Go"}
+          </button>
+
+          <p className=" flex justify-center text-sm text-zinc-500 gap-2">
+            Don`t have an account?{" "}
+            <Link href="/signup" className="text-blue-500">
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </div>
+
+      <div className="hidden lg:block w-1/2 relative m-6">
+        <img
+          src="/main.png"
+          alt="Delivery"
+          className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+        />
+      </div>
+    </main>
+  );
+}
