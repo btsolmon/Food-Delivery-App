@@ -16,16 +16,32 @@ export default function LoginPage() {
     setStatus(null);
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    // Server Action-оо дуудаж хариуг нь авна
+    // 1. Email бүтэц шалгах (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setStatus("Invalid email. Use a format like example@email.com.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Нууц үг хоосон эсэхийг шалгах
+    if (!password) {
+      setStatus("Please enter your password.");
+      setLoading(false);
+      return;
+    }
+
+    // 3. Сервер ажиллуулах
     const result = await loginAction(formData);
 
     if (result?.error) {
       setStatus(`✗ ${result.error}`);
-      setLoading(false); // Алдаа гарвал loading-ийг зогсооно
+      setLoading(false);
     } else {
-      // Амжилттай болсон бол 3001 порт руу шилжинэ
-      window.location.href = "http://localhost:3001";
+      window.location.href = "http://localhost:3000";
     }
   }
 

@@ -3,27 +3,96 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
-generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id       String @id @default(nanoid())
-  email    String @unique
-  password String
-  todos    Todo[]
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
 }
 
-model Todo {
-  id        String   @id @default(nanoid())
-  title     String
-  checked   Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  userId    String
+// ------------------------------------------------------
+// Enums
+// ------------------------------------------------------
+
+enum UserRoleEnum {
+  USER
+  ADMIN
+}
+
+enum FoodOrderStatusEnum {
+  PENDING
+  CANCELED
+  DELIVERED
+}
+
+// ------------------------------------------------------
+// Models (PostgreSQL Tables)
+// ------------------------------------------------------
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  phoneNumber String
+  address     String
+  role        UserRoleEnum @default(USER)
+  isVerified  Boolean      @default(false)
+  ttl         DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  orders FoodOrder[]
+}
+
+model FoodCategory {
+  id           String   @id @default(uuid())
+  categoryName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  foods Food[]
+}
+
+model Food {
+  id          String   @id @default(uuid())
+  foodName    String
+  price       Float
+  image       String
+  ingredients String
+  category    String // Foreign key for FoodCategory
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  foodCategory FoodCategory    @relation(fields: [category], references: [id])
+  orderItems   FoodOrderItem[]
+}
+
+// Энэ өмнө нь 'type' байсныг PostgreSQL-д зориулж тусдаа 'model' (table) болгов
+model FoodOrderItem {
+  id       String @id @default(uuid())
+  foodId   String
+  orderId  String
+  quantity Int
+
+  // Relations
+  food  Food      @relation(fields: [foodId], references: [id])
+  order FoodOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model FoodOrder {
+  id         String              @id @default(uuid())
+  userId     String // Foreign key for User
+  totalPrice Float
+  status     FoodOrderStatusEnum @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  // Relations
+  buyer User            @relation(fields: [userId], references: [id])
+  items FoodOrderItem[]
 }

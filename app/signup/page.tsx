@@ -28,22 +28,42 @@ export default function RegisterPage() {
     setStep(2); // Дараагийн алхам руу шилжих
     setStatus(null);
   }
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
 
     const formData = new FormData(e.currentTarget);
+    const password = formData.get("password") as string;
+    const confirm = formData.get("confirm") as string;
+
+    // 1. Password хоорондоо таарч байгаа эсэхийг шалгах
+    if (password !== confirm) {
+      setStatus("Those password did’t match, Try again");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Password хүчтэй эсэхийг (Regex) шалгах
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setStatus("Weak password. Use numbers and symbols.");
+      setLoading(false);
+      return;
+    }
+
+    // 3. Бүх юм зүгээр бол server action-аа дуудна
     const res = await registerAction(formData);
 
     if (res?.error) {
       setStatus(`✗ ${res.error}`);
-      setLoading(false); // Энэ мөрийг мартаж болохгүй
+      setLoading(false);
       return;
     }
+
     if (res?.success) {
-      router.push("/verify-email");
+      router.push("/login");
     }
     setLoading(false);
   }

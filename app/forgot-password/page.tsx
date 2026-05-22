@@ -2,28 +2,37 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { sendResetLinkAction } from "@/app/actions"; // Энд импортлоорой
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<"form" | "verify">("form");
   const [loading, setLoading] = useState(false);
   const [emailInput, setEmailInput] = useState("");
+  const [error, setError] = useState<string | null>(null); // Алдаа харуулах state
 
-  async function handleSend(e: React.FormEvent) {
+  async function handleSend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
-    // Энд та өөрийн Server Action-оо дуудна
-    // const res = await sendResetLinkAction(new FormData(e.currentTarget));
+    const formData = new FormData(e.currentTarget);
 
-    setLoading(false);
-    setStep("verify"); // Амжилттай болсон бол верификацийн хуудас руу шилжинэ
+    // Server Action-оо дуудна
+    const res = await sendResetLinkAction(formData);
+
+    if (res?.error) {
+      setError(res.error); // Алдаа гарвал харуулна
+      setLoading(false);
+    } else {
+      setStep("verify"); // Амжилттай болсон бол шилжинэ
+      setLoading(false);
+    }
   }
 
   return (
     <main className="min-h-dvh flex bg-white">
       <div className="flex-1 flex items-center justify-center p-6">
         {step === "form" ? (
-          /* Нууц үг сэргээх форм */
           <form onSubmit={handleSend} className="w-full max-w-sm space-y-6">
             <div>
               <h1 className="text-[24px] font-semibold text-black">
@@ -44,10 +53,13 @@ export default function ForgotPasswordPage() {
               placeholder="example@email.com"
             />
 
+            {/* Алдааны мессеж харуулах хэсэг */}
+            {error && <p className="text-sm text-red-500">{error}</p>}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition"
+              className="w-full rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send link"}
             </button>
@@ -60,26 +72,20 @@ export default function ForgotPasswordPage() {
             </p>
           </form>
         ) : (
-          /* Амжилттай илгээсний дараах хуудас */
           <div className="w-full max-w-sm space-y-6">
             <h1 className="text-[24px] font-semibold text-black">
               Please verify your email
             </h1>
             <p className="text-zinc-500">
               We just sent an email to{" "}
-              <a
-                href={`mailto:${emailInput}`}
-                className=" text-black hover:underline"
-              >
-                {emailInput}
-              </a>{" "}
+              <span className="font-semibold text-black">{emailInput}</span>{" "}
               Click the link in the email to verify your account.
             </p>
             <button
               onClick={() => setStep("form")}
-              className="w-full rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition"
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-black hover:bg-zinc-100 transition"
             >
-              Resend email
+              Back to form
             </button>
           </div>
         )}

@@ -1,10 +1,21 @@
 import "dotenv/config";
+import pg from "pg"; // <-- Заавал pg багцаас pool-ээ оруулж ирэх ёстой
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@/app/generated/prisma/client";
+import { PrismaClient } from "@/app/generated/prisma"; // Скима дээр заасан зөв зам руугаа чиглүүлнэ
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const connectionString = process.env.DATABASE_URL;
 
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not defined in .env file");
+}
 
-export { prisma };
+// PrismaPg адаптерт заавал pg.Pool-ийг дамжуулж өгөх ёстой
+const pool = new pg.Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+// Global хувьсагч ашиглан хөгжүүлэлтийн явцад хэт олон холболт (Pool connection) үүсэхээс сэргийлнэ
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
+export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
