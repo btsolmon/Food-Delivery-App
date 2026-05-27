@@ -1,7 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
 import { Container } from "./Container";
+import { useState } from "react";
+import { AddressModal } from "./AddressModal";
+import { UserDropdown } from "./UserDropdown";
 
 export default function Header() {
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   return (
     <header className="w-full h-17 bg-black">
       <Container className="h-full">
@@ -13,20 +20,38 @@ export default function Header() {
               <p className="text-sm text-white">Swift delivery</p>
             </div>
           </div>
+
           <div className="flex gap-3.5">
             <input
-              className="w-62.75 h-9 bg-white rounded-3xl text-sm "
-              placeholder="   Delivery address: Add Location"
+              readOnly
+              onClick={() => setIsAddressModalOpen(true)}
+              className="w-62.75 h-9 bg-white rounded-3xl text-sm px-4 cursor-pointer"
+              placeholder="Delivery address: Add Location"
             />
             <button className="w-9 h-9 bg-white rounded-3xl cursor-pointer">
               <img src="/shoppingcart.svg" alt="shopping cart" />
             </button>
-            <button className="w-9 h-9 bg-red-500 rounded-3xl cursor-pointer">
-              <img src="/user.svg" alt="user" />
-            </button>
+
+            {/* ЗӨВ БҮТЭЦ: Dropdown-ыг товчлуурын дотор биш, гадна нь relative контейнерт хийнэ */}
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="w-9 h-9 bg-red-500 rounded-3xl cursor-pointer flex items-center justify-center"
+              >
+                <img src="/user.svg" alt="user" />
+              </button>
+
+              {isUserMenuOpen && (
+                <UserDropdown onClose={() => setIsUserMenuOpen(false)} />
+              )}
+            </div>
           </div>
         </div>
       </Container>
+
+      {isAddressModalOpen && (
+        <AddressModal onClose={() => setIsAddressModalOpen(false)} />
+      )}
     </header>
   );
 }

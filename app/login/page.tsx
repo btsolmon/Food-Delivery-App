@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -34,14 +35,54 @@ export default function LoginPage() {
       return;
     }
 
-    // 3. Сервер ажиллуулах
-    const result = await loginAction(formData);
+    try {
+      // 3. Сервер ажиллуулах (Server Action)
+      const result = await loginAction(formData);
 
-    if (result?.error) {
-      setStatus(`✗ ${result.error}`);
+      if (result?.error) {
+        setStatus(`✗ ${result.error}`);
+        setLoading(false);
+      } else {
+        // 🔑 АРГА 1: Серверээс токен ирсэн эсэхийг шалгах
+        if (result?.token) {
+          // localStorage-д токеноо хадгална
+          localStorage.setItem("token", result.token);
+
+          try {
+            // Токеныг фронт-энд талд гар аргаар задлах (Decode JWT)
+            const base64Url = result.token.split(".")[1];
+            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+            const jsonPayload = decodeURIComponent(
+              atob(base64)
+                .split("")
+                .map(
+                  (c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2),
+                )
+                .join(""),
+            );
+
+            const payload = JSON.parse(jsonPayload);
+
+            // 🎯 Хэрэглэгчийн эрхийг (role) шалгаж зөв замаар нь чиглүүлэх
+            if (payload.role === "ADMIN") {
+              window.location.href = "/admin"; // Админ бол админ панель руу
+            } else {
+              window.location.href = "/"; // Энгийн хэрэглэгч бол үндсэн сайт руу
+            }
+          } catch (decodeError) {
+            console.error("Токен уншихад алдаа гарлаа:", decodeError);
+            // Хэрэв токен задрахгүй ямар нэг асуудал гарвал хамгаалалт үүднээс үндсэн сайт руу шиднэ
+            window.location.href = "/";
+          }
+        } else {
+          // Хэрэв токен күүкигээр (Cookie) цаанаа хадгалагдсан бол шууд үндсэн сайт руу шиднэ
+          window.location.href = "/";
+        }
+      }
+    } catch (err) {
+      console.error("Нэвтрэх үед алдаа гарлаа:", err);
+      setStatus("✗ Системийн алдаа гарлаа. Түр хүлээгээд дахин туршина уу.");
       setLoading(false);
-    } else {
-      window.location.href = "http://localhost:3000";
     }
   }
 
@@ -93,7 +134,7 @@ export default function LoginPage() {
             {loading ? "..." : "Let's Go"}
           </button>
 
-          <p className=" flex justify-center text-sm text-zinc-500 gap-2">
+          <p className="flex justify-center text-sm text-zinc-500 gap-2">
             Don`t have an account?{" "}
             <Link href="/signup" className="text-blue-500">
               Sign up
@@ -102,6 +143,7 @@ export default function LoginPage() {
         </form>
       </div>
 
+      {/* Баруун талын Зураг хэсэг */}
       <div className="hidden lg:block w-1/2 relative m-6">
         <img
           src="/main.png"

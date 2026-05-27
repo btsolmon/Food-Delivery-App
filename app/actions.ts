@@ -1,14 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { Resend } from "resend";
+import jwt from "jsonwebtoken"; // 🔑 Токен үүсгэхэд хэрэгтэй сан
+import { cookies } from "next/headers"; // 🔑 Күүки хадгалах Next.js сан
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+// 🔐 JWT Нууц үг (Продюшн дээр .env-ээс уншина, байхгүй бол түр ашиглах утга)
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key-123";
 
 export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
@@ -30,7 +36,33 @@ export async function loginAction(formData: FormData) {
     return { error: "Incorrect password. Please try again." };
   }
 
-  return { success: true };
+  // 🔑 1. УХААЛАГ ШАЛГАЛТ: Хэрэв чиний нэвтэрсэн имэйл чинь Prisma Studio дээр сольсон админ имэйл мөн бол
+  // Эсвэл датабэйс дээрээс role-ийг нь уншиж чадвал ADMIN эрх өгнө.
+  // (Жишээ нь: Чиний админ имэйл 'admin@email.com' бол доорхийг өөрийнхөөрөө солиорой)
+  const userRole =
+    (user as any).role ||
+    (email === "btsolmon.mn@gmail.com" ? "ADMIN" : "USER");
+
+  // 🔑 2. Одоо userRole-ийг токен руу шингээнэ
+  const token = jwt.sign({ id: user.id, role: userRole }, JWT_SECRET, {
+    expiresIn: "1d",
+  });
+
+  // 🔑 3. Токенийг Күүки (Cookie) рүү хадгалах
+  const cookieStore = await cookies();
+  cookieStore.set("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+  });
+
+  // 🔑 4. Фронт-энд рүү зөв ролийг буцаах
+  return {
+    success: true,
+    token: token,
+    role: userRole,
+  };
 }
 
 export async function registerAction(formData: FormData) {
@@ -78,6 +110,7 @@ export async function registerAction(formData: FormData) {
         password: hashedPassword,
         phoneNumber: "",
         address: "",
+        role: "USER", // Анх бүртгүүлэхэд энгийн USER эрхтэй үүснэ
       },
     });
 
@@ -99,26 +132,21 @@ export async function registerAction(formData: FormData) {
 export async function sendResetLinkAction(formData: FormData) {
   const email = formData.get("email")?.toString().toLowerCase().trim() || "";
 
-  // 1. И-мэйл бүтэц шалгах
   if (!emailRegex.test(email)) {
     return { error: "Invalid email. Use a format like example@email.com" };
   }
 
   try {
-    // 2. Хэрэглэгч байгаа эсэхийг шалгах
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      // Аюулгүй байдлын үүднээс и-мэйл байхгүй бол
-      // "Имэйл илгээгдлээ" гэж хэлэх нь хэрэглэгчийг төөрөлдүүлэхгүй
       return { error: "User not found." };
     }
 
-    // 3. Имэйл илгээх (Нууц үг сэргээх линк)
     await resend.emails.send({
-      from: "onboarding@resend.dev", // Өөрийн домайн эсвэл илгээгчээ тохируулна уу
+      from: "onboarding@resend.dev",
       to: email,
       subject: "Reset your password",
       html: `
@@ -140,7 +168,6 @@ export async function updatePasswordAction(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Regex шалгалт (өмнөх дүрмээрээ)
   if (!passwordRegex.test(password)) {
     return {
       error:

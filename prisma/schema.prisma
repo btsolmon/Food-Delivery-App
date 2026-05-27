@@ -32,11 +32,11 @@ enum FoodOrderStatusEnum {
 // ------------------------------------------------------
 
 model User {
-  id          String       @id @default(uuid())
+  id          String       @id @default(cuid()) // 🔑 Нано ID шиг авсаархан, санамсаргүй ID автоматаар үүснэ
   email       String       @unique
   password    String
-  phoneNumber String
-  address     String
+  phoneNumber String?
+  address     String?
   role        UserRoleEnum @default(USER)
   isVerified  Boolean      @default(false)
   ttl         DateTime?
@@ -48,7 +48,7 @@ model User {
 }
 
 model FoodCategory {
-  id           String   @id @default(uuid())
+  id           String   @id @default(cuid()) // 🔑 Prisma Studio дээр хоосон орхисон ч автоматаар NanoID шиг утга үүснэ
   categoryName String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -58,23 +58,23 @@ model FoodCategory {
 }
 
 model Food {
-  id          String   @id @default(uuid())
-  foodName    String
-  price       Float
-  image       String
-  ingredients String
-  category    String // Foreign key for FoodCategory
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid()) // 🔑 Энд бас автоматаар санамсаргүй ID үүснэ
+  foodName       String
+  price          Float
+  image          String
+  ingredients    String
+  foodCategoryId String // 🔑 Түүнээс гадна харилцааны ID-г тодорхой нэрлэв (Foreign Key)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relations
-  foodCategory FoodCategory    @relation(fields: [category], references: [id])
+  foodCategory FoodCategory    @relation(fields: [foodCategoryId], references: [id], onDelete: Cascade)
   orderItems   FoodOrderItem[]
 }
 
 // Энэ өмнө нь 'type' байсныг PostgreSQL-д зориулж тусдаа 'model' (table) болгов
 model FoodOrderItem {
-  id       String @id @default(uuid())
+  id       String @id @default(cuid()) // 🔑 Энд бас cuid()
   foodId   String
   orderId  String
   quantity Int
@@ -85,8 +85,8 @@ model FoodOrderItem {
 }
 
 model FoodOrder {
-  id         String              @id @default(uuid())
-  userId     String // Foreign key for User
+  id         String              @id @default(cuid()) // 🔑 Энд бас cuid()
+  userId     String
   totalPrice Float
   status     FoodOrderStatusEnum @default(PENDING)
   createdAt  DateTime            @default(now())
