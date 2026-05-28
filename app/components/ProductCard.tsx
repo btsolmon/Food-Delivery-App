@@ -74,8 +74,13 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       </article>
       {isModalOpen && (
-        <ProductModal product={product} onClose={() => setIsModalOpen(false)} />
+        <ProductModal
+          product={product}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handleAddToCart}
+        />
       )}
+      {showToast && <Toast message={`${product.name} сагсанд нэмэгдлээ!`} />}
     </>
   );
 }

@@ -6,9 +6,11 @@ import { useContext, useState } from "react";
 export const ProductModal = ({
   product,
   onClose,
+  onSuccess,
 }: {
   product: any;
   onClose: () => void;
+  onSuccess?: () => void;
 }) => {
   const [count, setCount] = useState(1);
   const { addToCart } = useContext(CartContext);
@@ -53,6 +55,7 @@ export const ProductModal = ({
             <button
               onClick={() => {
                 addToCart(product, count);
+                if (onSuccess) onSuccess();
                 onClose();
               }}
               className="w-full bg-black text-white mt-4 py-3 rounded-3xl"
