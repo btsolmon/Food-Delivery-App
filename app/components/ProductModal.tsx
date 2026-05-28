@@ -1,0 +1,67 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import { CartContext } from "@/context/CartContext";
+import { useContext, useState } from "react";
+
+export const ProductModal = ({
+  product,
+  onClose,
+}: {
+  product: any;
+  onClose: () => void;
+}) => {
+  const [count, setCount] = useState(1);
+  const { addToCart } = useContext(CartContext);
+
+  return (
+    <>
+      {/* Арын бүдэг хэсэг */}
+      <div className="fixed inset-0 bg-black/50 z-[200]" onClick={onClose} />
+
+      {/* Цонхны гол хэсэг */}
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-3xl w-[700px] z-[201] flex gap-6">
+        <img
+          src={product.image}
+          className="w-[300px] h-[300px] object-cover rounded-2xl"
+        />
+        <div className="flex-1 flex flex-col gap-4">
+          <h2 className="text-2xl font-bold text-red-500">{product.name}</h2>
+          <p className="text-gray-600 text-sm">{product.description}</p>
+
+          <div className="mt-auto text-black">
+            <div className="flex justify-between">
+              <div>
+                <p className="text-sm">Total price</p>
+                <p className="text-xl font-bold">{product.price}</p>
+              </div>
+              <div className="flex items-center gap-4 mt-2">
+                <button
+                  onClick={() => setCount(Math.max(1, count - 1))}
+                  className="border px-3 py-1 rounded-full"
+                >
+                  -
+                </button>
+                <span className="font-bold">{count}</span>
+                <button
+                  onClick={() => setCount(count + 1)}
+                  className="border px-3 py-1 rounded-full"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                addToCart(product, count);
+                onClose();
+              }}
+              className="w-full bg-black text-white mt-4 py-3 rounded-3xl"
+            >
+              Add to cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 3. Захиалга үүсгэх эсвэл харах үед (Заавал нэвтэрсэн байх ёстой)
-  if (pathname.startsWith("/api/orders")) {
+  if (pathname.startsWith("/api/orders") || pathname === "/api/users/address") {
     const authHeader = request.headers.get("Authorization");
 
     if (!authHeader) {
@@ -79,5 +79,6 @@ export const config = {
     "/api/categories/:path*",
     "/api/orders/:path*",
     "/api/upload/:path*",
+    "/api/users/address",
   ],
 };

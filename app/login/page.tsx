@@ -48,6 +48,8 @@ export default function LoginPage() {
           // localStorage-д токеноо хадгална
           localStorage.setItem("token", result.token);
 
+          localStorage.setItem("userEmail", email);
+
           try {
             // Токеныг фронт-энд талд гар аргаар задлах (Decode JWT)
             const base64Url = result.token.split(".")[1];

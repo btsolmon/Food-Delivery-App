@@ -1,13 +1,16 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { Container } from "./Container";
 import { useState } from "react";
 import { AddressModal } from "./AddressModal";
 import { UserDropdown } from "./UserDropdown";
+import { CartDrawer } from "./CartDrawer";
 
 export default function Header() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   return (
     <header className="w-full h-17 bg-black">
@@ -22,18 +25,25 @@ export default function Header() {
           </div>
 
           <div className="flex gap-3.5">
-            <input
-              readOnly
+            <button
               onClick={() => setIsAddressModalOpen(true)}
-              className="w-62.75 h-9 bg-white rounded-3xl text-sm px-4 cursor-pointer"
-              placeholder="Delivery address: Add Location"
-            />
-            <button className="w-9 h-9 bg-white rounded-3xl cursor-pointer">
+              className="flex justify-center items-center h-9 bg-white rounded-3xl text-sm px-4 gap-1
+              cursor-pointer"
+            >
+              <img src="/locationicon.svg" alt="location" className="" />
+              <p className="text-red-500">Delivery address:</p>
+              <p className="text-gray-500">Add Location</p>
+              <img src="/chevronright.svg" alt="location" className="" />
+            </button>
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="w-9 h-9 bg-white rounded-3xl cursor-pointer"
+            >
               <img src="/shoppingcart.svg" alt="shopping cart" />
             </button>
 
             {/* ЗӨВ БҮТЭЦ: Dropdown-ыг товчлуурын дотор биш, гадна нь relative контейнерт хийнэ */}
-            <div className="relative">
+            <div className="relative z-[100] ">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="w-9 h-9 bg-red-500 rounded-3xl cursor-pointer flex items-center justify-center"
@@ -41,9 +51,19 @@ export default function Header() {
                 <img src="/user.svg" alt="user" />
               </button>
 
-              {isUserMenuOpen && (
-                <UserDropdown onClose={() => setIsUserMenuOpen(false)} />
-              )}
+              {isUserMenuOpen &&
+                (localStorage.getItem("token") ? (
+                  <UserDropdown onClose={() => setIsUserMenuOpen(false)} />
+                ) : (
+                  <div className="absolute top-12 right-0 p-4 bg-white rounded-xl shadow-lg">
+                    <a
+                      href="/login"
+                      className="text-sm font-bold text-black rounded-3xl bg-gray-100 hover:bg-gray-200 px-4 py-2"
+                    >
+                      Login
+                    </a>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -52,6 +72,8 @@ export default function Header() {
       {isAddressModalOpen && (
         <AddressModal onClose={() => setIsAddressModalOpen(false)} />
       )}
+
+      {isCartOpen && <CartDrawer onClose={() => setIsCartOpen(false)} />}
     </header>
   );
 }

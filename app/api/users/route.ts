@@ -17,11 +17,14 @@ export const GET = async () => {
         isVerified: true,
         createdAt: true,
         // password: false -> Нууц үгийг хасаж авч байна
-      }
+      },
     });
     return NextResponse.json(users, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Хэрэглэгчдийн мэдээллийг авахад алдаа гарлаа" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Хэрэглэгчдийн мэдээллийг авахад алдаа гарлаа" },
+      { status: 500 },
+    );
   }
 };
 
@@ -31,8 +34,11 @@ export const POST = async (req: NextRequest) => {
     const data: Prisma.UserCreateInput = await req.json();
 
     // Заавал байх ёстой талбаруудыг шалгах (Validation)
-    if (!data.email || !data.password || !data.phoneNumber || !data.address) {
-      return NextResponse.json({ error: "Мэдээлэл дутуу байна. (email, password, phoneNumber, address заавал хэрэгтэй)" }, { status: 400 });
+    if (!data.email || !data.password) {
+      return NextResponse.json(
+        { error: "Мэдээлэл дутуу байна. (email, password)" },
+        { status: 400 },
+      );
     }
 
     // Нууц үгийг hash хийж нууцлах
@@ -52,9 +58,15 @@ export const POST = async (req: NextRequest) => {
   } catch (error: any) {
     // Хэрэв ижилхэн email-тэй хэрэглэгч бүртгүүлэх гэвэл (Unique constraint error)
     if (error.code === "P2002") {
-      return NextResponse.json({ error: "Энэ и-мэйл хаяг аль хэдийн бүртгэгдсэн байна" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Энэ и-мэйл хаяг аль хэдийн бүртгэгдсэн байна" },
+        { status: 400 },
+      );
     }
-    
-    return NextResponse.json({ error: "Хэрэглэгч үүсгэхэд алдаа гарлаа" }, { status: 500 });
+
+    return NextResponse.json(
+      { error: "Хэрэглэгч үүсгэхэд алдаа гарлаа" },
+      { status: 500 },
+    );
   }
 };
