@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useContext } from "react"; // useState-ийг энд ашиглахгүй болсон тул хассан
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/context/CartContext";
-import { useState } from "react";
 
 export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
   const [activeTab, setActiveTab] = useState("Cart");
+  const [address, setAddress] = useState("");
+  const [addressError, setAddressError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [orders, setOrders] = useState<any[]>([]);
+
   // Context-ээс хэрэгтэй функцүүдээ дуудна
   const {
     cartItems,
@@ -14,17 +18,92 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
     itemsTotal,
     shipping,
     total,
+    clearCart,
   } = useContext(CartContext);
+
+  // Захиалгын түүхийг API-аас татах
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await fetch("/api/orders/my", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setOrders(data);
+        }
+      } catch (err) {
+        console.error("Orders татахад алдаа гарлаа:", err);
+      }
+    };
+    if (activeTab === "Order") fetchOrders();
+  }, [activeTab]);
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+    if (!address.trim()) {
+      setAddressError(true);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Захиалга хийхийн тулд нэвтэрнэ үү!");
+      return;
+    }
+
+    try {
+      // Токеноос userId-г авах
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: payload.id,
+          totalPrice: total,
+          items: cartItems.map((item: any) => ({
+            foodId: item.id,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      if (res.ok) {
+        setShowSuccess(true);
+        setAddress("");
+        if (clearCart) clearCart();
+        setTimeout(() => {
+          setShowSuccess(false);
+          setActiveTab("Order");
+        }, 3000);
+      }
+    } catch (err) {
+      alert("Захиалга илгээхэд алдаа гарлаа.");
+    }
+  };
 
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-[100]" onClick={onClose} />
 
       <div className="fixed top-0 right-0 h-full w-[535px] bg-[#333333] z-[101] p-5 shadow-2xl flex flex-col gap-[24px] rounded-l-2xl">
-        <h2 className="text-white text-[20px] font-semibold flex gap-3">
-          <img src="/shoppingcartwhite.svg" alt="cart" /> Order detail
-        </h2>
-
+        <div className="flex justify-between">
+          <h2 className="text-white text-[20px] font-semibold flex gap-3">
+            <img src="/shoppingcartwhite.svg" alt="cart" /> Order detail
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-white border rounded-3xl px-2.5 py-1"
+          >
+            ✕
+          </button>
+        </div>
         <div className="bg-white h-[44px] p-1 rounded-3xl flex">
           <button
             onClick={() => setActiveTab("Cart")}
@@ -46,7 +125,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
             cartItems.length === 0 ? (
               // Хоосон үеийн загвар (Таны хүссэнээр)
               <>
-                <h2 className="text-xl font-bold mb-4">My Cart</h2>
+                <h2 className="text-xl font-bold mb-4">My cart</h2>
                 <div className="bg-gray-100 rounded-xl p-[32px] flex flex-col items-center justify-center gap-2">
                   <img
                     src="/logo.svg"
@@ -63,96 +142,220 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
             ) : (
               // Бараа нэмэгдсэн үеийн жагсаалт
               <>
-                <h2 className="text-xl font-bold mb-4">My Cart</h2>
+                <h2 className="text-xl font-bold mb-4 text-gray-500">
+                  My cart
+                </h2>
                 {cartItems.map((item: any) => (
                   <div
                     key={item.name}
-                    className="flex items-center gap-4 border-b pb-4 mb-4"
+                    className="flex items-center gap-4 border-b border-dashed border-gray-300 pb-4 mb-4"
                   >
                     <img
                       src={item.image}
-                      className="w-16 h-16 rounded-xl object-cover"
+                      className="w-[124px] h-[120px] rounded-xl object-cover"
                     />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-bold text-sm">{item.name}</h4>
+                    <div className="flex-1 flex flex-col gap-5">
+                      <div className="flex justify-between items-start">
+                        <div className="flex flex-col">
+                          <h4 className="font-bold text-[16px] text-red-500">
+                            {item.name}
+                          </h4>
+                          <p className="text-[12px] line-clamp-2">
+                            {item.description}
+                          </p>
+                        </div>
                         <button
                           onClick={() => removeFromCart(item.name)}
-                          className="text-red-500"
+                          className="text-red-500 border rounded-3xl px-2.5 py-1"
                         >
                           ✕
                         </button>
                       </div>
-                      <div className="flex items-center gap-3 mt-2">
+                      <div className="flex items-center gap-3 mt-2 text-[18px]">
                         <button
                           onClick={() => updateQuantity(item.name, -1)}
-                          className="border px-2 rounded-full"
+                          className="px-2"
                         >
                           -
                         </button>
                         <span className="font-bold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.name, 1)}
-                          className="border px-2 rounded-full"
+                          className="px-2"
                         >
                           +
                         </button>
-                        <span className="ml-auto font-bold text-sm">
+                        <span className="ml-auto font-bold text-[18px]">
                           {item.price}
                         </span>
                       </div>
                     </div>
                   </div>
                 ))}
+                <div>
+                  <h1 className="text-xl font-bold text-gray-500 pb-2">
+                    Delivery Location
+                  </h1>
+                  <textarea
+                    className={`w-full border p-2 rounded-lg text-[14px] outline-none transition-colors ${
+                      addressError ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Please share your complete address"
+                    value={address}
+                    onChange={(e) => {
+                      setAddress(e.target.value);
+                      if (addressError) setAddressError(false);
+                    }}
+                  />
+                  {addressError && (
+                    <p className="text-red-500 text-[12px] mt-1">
+                      Please complete your address
+                    </p>
+                  )}
+                </div>
               </>
             )
           ) : (
             // Order history хэсэг (Таны хүссэнээр)
-            <>
-              <h2 className="text-xl font-bold mb-4">Order history</h2>
-              <div className="bg-gray-100 rounded-xl p-[32px] flex flex-col items-center justify-center gap-2">
-                <img
-                  src="/logo.svg"
-                  alt="empty"
-                  className="w-[61px] h-[50px]"
-                />
-                <h3 className="font-bold text-lg">No Orders Yet?</h3>
-                <p className="text-gray-500 text-sm text-center">
-                  🍕 You have not placed any orders yet. Start exploring our
-                  menu and satisfy your cravings!
-                </p>
-              </div>
-            </>
+            <div className="flex flex-col gap-4">
+              <h2 className="text-xl font-bold mb-2">Order history</h2>
+              {orders.length === 0 ? (
+                <div className="bg-gray-100 rounded-xl p-[32px] flex flex-col items-center justify-center gap-2">
+                  <img
+                    src="/logo.svg"
+                    alt="empty"
+                    className="w-[61px] h-[50px]"
+                  />
+                  <h3 className="font-bold text-lg">No Orders Yet?</h3>
+                  <p className="text-gray-500 text-sm text-center">
+                    🍕 You have not placed any orders yet. Start exploring our
+                    menu and satisfy your cravings!
+                  </p>
+                </div>
+              ) : (
+                orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="p-2 flex flex-col gap-2 border-b border-dashed border-gray-300"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold text-lg">
+                          ${(order.totalPrice || 0).toFixed(2)}
+                        </span>
+                        <span className="font-bold text-lg text-gray-400">
+                          #{order.id.slice(-5).toUpperCase()}
+                        </span>
+                      </div>
+                      <span
+                        className={`text-[12px] px-3 py-1 rounded-full font-bold border ${
+                          order.status === "Delivered"
+                            ? "bg-gray-100 border-gray-300 text-gray-500"
+                            : "bg-white border-red-300 text-red-500"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-1 text-xs text-gray-500">
+                      <div className="flex gap-1">
+                        <img
+                          src="/orderproducticon.svg"
+                          alt="empty"
+                          className="w-[12px] h-[12px]"
+                        />
+                        <p className="truncate w-40">
+                          {order.items
+                            ?.map((i: any) => i.food.foodName)
+                            .join(", ")}
+                        </p>
+                      </div>
+                      <span className="ml-2 font-bold text-gray-500">
+                        x{" "}
+                        {order.items?.reduce(
+                          (sum: number, i: any) => sum + i.quantity,
+                          0,
+                        ) || 0}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <img
+                        src="/orderproductdateicon.svg"
+                        alt="empty"
+                        className="w-[12px] h-[12px]"
+                      />{" "}
+                      <span>{new Date(order.createdAt).toLocaleString()}</span>
+                    </div>
+
+                    <p className="flex items-center gap-1 text-xs text-gray-500">
+                      <img
+                        src="/orderproductaddressicon.svg"
+                        alt="empty"
+                        className="w-[12px] h-[12px]"
+                      />
+                      {order.address}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
           )}
         </div>
 
         {/* 3. PAYMENT INFO (Динамик үнийн дүнтэй) */}
-        <div className="bg-white rounded-3xl p-6">
-          <h3 className="font-bold mb-4 text-black text-[20px]">
-            Payment info
-          </h3>
-          <div className="space-y-2 text-[16px] text-gray-600">
+        <div className="bg-white text-gray-500 rounded-3xl p-6">
+          <h3 className="font-bold mb-4 text-[20px]">Payment info</h3>
+          <div className="space-y-2 text-[16px]">
             <div className="flex justify-between">
               <span>Items</span>
-              <span>${itemsTotal.toFixed(2)}</span>
+              <span className="font-bold text-black">
+                ${itemsTotal.toFixed(2)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span>${shipping.toFixed(2)}</span>
+              <span className="font-bold text-black">
+                ${shipping.toFixed(2)}
+              </span>
             </div>
             <div className="border-t border-dashed border-gray-300 my-2"></div>
-            <div className="flex justify-between text-base font-bold text-black">
+            <div className="flex justify-between text-base">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span className="font-bold text-black">${total.toFixed(2)}</span>
             </div>
           </div>
           <button
+            onClick={handleCheckout}
             className={`w-full py-3 rounded-3xl font-bold mt-6 ${cartItems.length > 0 ? "bg-[#ff5252] text-white" : "bg-[#fcdbd9] text-white cursor-not-allowed"}`}
           >
             Checkout
           </button>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 animate-in fade-in duration-300">
+          <div className="bg-white p-10 rounded-xl shadow-2xl flex flex-col items-center justify-center text-center gap-6 animate-in zoom-in duration-300">
+            <h1 className="text-[24px] font-bold text-black">
+              Your order has been successfully placed!
+            </h1>
+            <img
+              src="/illustration.png"
+              alt="illustration"
+              className="w-auto h-auto object-contain"
+            />
+            <button
+              onClick={onClose}
+              className=" bg-gray-100 hover:bg-gray-200 text-black text-xs font-semibold rounded-2xl px-8 py-2.5"
+            >
+              Back to home
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

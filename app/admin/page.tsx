@@ -96,10 +96,11 @@ export default function AdminDashboard() {
               </span>{" "}
               Food menu
             </button>
-            <button className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm">
-              <span className="text-lg">
-                <img src="/truckicon.svg" alt="" />
-              </span>{" "}
+            <button
+              onClick={() => router.push("/admin/orders")}
+              className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm"
+            >
+              <img src="/truckicon.svg" alt="" />
               Orders
             </button>
           </nav>

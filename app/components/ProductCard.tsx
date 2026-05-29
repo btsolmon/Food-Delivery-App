@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Toast } from "./Toast";
 
 export type Product = {
+  id?: string;
   name: string;
   description: string;
   price: string;

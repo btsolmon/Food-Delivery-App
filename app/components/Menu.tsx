@@ -45,6 +45,7 @@ export async function Menu() {
               {section.foods.map((food) => {
                 // 4. Манай бэкэнд датаг багшийн ProductCard-д тохируулж хөрвүүлнэ (Mapping)
                 const mappedProduct: Product = {
+                  id: food.id,
                   name: food.foodName,
                   description:
                     food.description || "Орц найрлага байхгүй байна.",
