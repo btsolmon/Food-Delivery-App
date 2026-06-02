@@ -39,14 +39,14 @@ export const ProductModal = ({
               <div className="flex items-center gap-4 mt-2">
                 <button
                   onClick={() => setCount(Math.max(1, count - 1))}
-                  className="border px-3 py-1 rounded-full"
+                  className="border px-3 py-1 rounded-full cursor-pointer"
                 >
                   -
                 </button>
                 <span className="font-bold">{count}</span>
                 <button
                   onClick={() => setCount(count + 1)}
-                  className="border px-3 py-1 rounded-full"
+                  className="border px-3 py-1 rounded-full cursor-pointer"
                 >
                   +
                 </button>
@@ -58,7 +58,7 @@ export const ProductModal = ({
                 if (onSuccess) onSuccess();
                 onClose();
               }}
-              className="w-full bg-black text-white mt-4 py-3 rounded-3xl"
+              className="w-full bg-black text-white mt-4 py-3 rounded-3xl cursor-pointer"
             >
               Add to cart
             </button>

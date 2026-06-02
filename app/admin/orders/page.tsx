@@ -9,6 +9,16 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
+
+  // Хуудас ачаалагдахад localStorage-оос датаг сэргээх
+  useEffect(() => {
+    const savedOrders = localStorage.getItem("adminOrderCache");
+    if (savedOrders) {
+      setOrders(JSON.parse(savedOrders));
+    }
+  }, []);
 
   // API-аас дата татах
   const fetchOrders = async () => {
@@ -24,6 +34,7 @@ export default function AdminOrders() {
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
+        localStorage.setItem("adminOrderCache", JSON.stringify(data));
       }
     } catch (err) {
       console.error(err);
@@ -33,6 +44,13 @@ export default function AdminOrders() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  // Pagination логик
+  const totalPages = Math.max(1, Math.ceil(orders.length / ITEMS_PER_PAGE));
+  const currentOrders = orders.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const toggleSelectAll = () => {
     setSelectedOrders(
@@ -78,8 +96,8 @@ export default function AdminOrders() {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 max-w-[1200px] mx-auto w-full">
-        <div className="bg-white p-8 rounded-2xl border border-neutral-100 shadow-sm">
+      <main className="flex-1 p-8 space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
+        <div className="bg-white p-8 rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Orders</h1>
             <span className="text-sm text-neutral-500">
@@ -87,7 +105,7 @@ export default function AdminOrders() {
             </span>
           </div>
 
-          <div className="grid grid-cols-[40px_80px_160px_120px_150px_100px_1fr_150px] gap-4 px-4 pb-4 border-b border-neutral-100 text-[14px] font-bold text-neutral-400">
+          <div className="grid grid-cols-[40px_80px_160px_120px_150px_100px_1fr_150px] min-w-[1000px] gap-4 px-4 pb-4 border-b border-neutral-100 text-[14px] font-bold text-neutral-400">
             <div>
               <input
                 type="checkbox"
@@ -106,9 +124,9 @@ export default function AdminOrders() {
             <div className="text-right"> Delivery State</div>
           </div>
 
-          {orders.map((order: any) => (
+          {currentOrders.map((order: any) => (
             <React.Fragment key={order.id}>
-              <div className="grid grid-cols-[40px_80px_160px_120px_150px_100px_1fr_150px] gap-4 items-center px-4 py-6 border-b border-neutral-50 text-sm">
+              <div className="grid grid-cols-[40px_80px_160px_120px_150px_100px_1fr_150px] min-w-[1000px] gap-4 items-center px-4 py-6 border-b border-neutral-50 text-sm">
                 <div>
                   <input
                     type="checkbox"
@@ -154,7 +172,13 @@ export default function AdminOrders() {
                     onChange={(e) =>
                       handleStatusChange(order.id, e.target.value)
                     }
-                    className="bg-neutral-100 text-[10px] font-bold px-3 py-2 rounded-full cursor-pointer outline-none"
+                    className={`text-[10px] font-bold px-3 py-2 rounded-full cursor-pointer outline-none border transition-all ${
+                      order.status === "PENDING"
+                        ? "border-red-500 text-red-500 bg-red-50"
+                        : order.status === "DELIVERED"
+                          ? "border-green-500 text-green-500 bg-green-50"
+                          : "border-gray-400 text-gray-400 bg-gray-50"
+                    }`}
                   >
                     <option value="PENDING">PENDING</option>
                     <option value="DELIVERED">DELIVERED</option>
@@ -164,7 +188,7 @@ export default function AdminOrders() {
               </div>
 
               {expandedOrders.includes(order.id) && (
-                <div className="px-12 py-4 bg-neutral-50 border-b border-neutral-100">
+                <div className="px-12 py-4 bg-neutral-50 border-b border-neutral-100 min-w-[1000px]">
                   <div className="flex gap-4">
                     {order.items?.map((item: any) => (
                       <div
@@ -185,6 +209,47 @@ export default function AdminOrders() {
               )}
             </React.Fragment>
           ))}
+
+          {/* Pagination Controls */}
+          {orders.length > 0 && (
+            <div className="flex justify-end items-center gap-3 mt-8 pb-4">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm"
+              >
+                Previous
+              </button>
+
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                        currentPage === page
+                          ? "bg-black text-white shadow-md scale-105"
+                          : "bg-white text-neutral-500 border border-neutral-100 hover:bg-neutral-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+              </div>
+
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>

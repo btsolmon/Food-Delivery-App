@@ -7,23 +7,23 @@ export async function GET() {
     const orders = await prisma.foodOrder.findMany({
       include: {
         buyer: {
-          select: { id: true, email: true, phoneNumber: true, address: true }
+          select: { id: true, email: true, phoneNumber: true, address: true },
         },
         items: {
           include: {
-            food: true // Захиалсан хоолны дэлгэрэнгүй мэдээллийг цуг авна
-          }
-        }
+            food: true, // Захиалсан хоолны дэлгэрэнгүй мэдээллийг цуг авна
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc" // Хамгийн сүүлийн захиалгыг дээр нь харуулна
-      }
+        createdAt: "desc", // Хамгийн сүүлийн захиалгыг дээр нь харуулна
+      },
     });
     return NextResponse.json(orders, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Захиалгуудыг уншихад алдаа гарлаа" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -32,13 +32,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, totalPrice, items } = body; 
+    const { userId, totalPrice, items, address } = body;
     // items нь ийм бүтэцтэй байна: [{ foodId: "uuid-1", quantity: 2 }, { foodId: "uuid-2", quantity: 1 }]
 
     if (!userId || !totalPrice || !items || items.length === 0) {
       return NextResponse.json(
         { error: "userId, totalPrice, болон items (хоолнууд) заавал хэрэгтэй" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,17 +47,22 @@ export async function POST(request: NextRequest) {
       data: {
         userId,
         totalPrice: Number(totalPrice),
+        address: address,
         status: "PENDING", // Анх үүсэхдээ хүлээгдэж буй төлөвтэй байна
         items: {
           create: items.map((item: { foodId: string; quantity: number }) => ({
             foodId: item.foodId,
-            quantity: Number(item.quantity)
-          }))
-        }
+            quantity: Number(item.quantity),
+          })),
+        },
       },
       include: {
-        items: true // Үүссэн хоолнуудын жагсаалтыг хариунд цуг буцаана
-      }
+        items: {
+          include: {
+            food: true, // Хоолны нэр, зураг зэргийг хариунд цуг авна
+          },
+        },
+      },
     });
 
     return NextResponse.json(newOrder, { status: 201 });
@@ -65,7 +70,35 @@ export async function POST(request: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Захиалга үүсгэхэд алдаа гарлаа" },
-      { status: 500 }
+      { status: 500 },
+    );
+  }
+}
+
+// 3. Захиалгын төлөв шинэчлэх (PATCH) - Админ төлөв солиход
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, status } = body;
+
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: "ID болон Status заавал хэрэгтэй" },
+        { status: 400 },
+      );
+    }
+
+    const updatedOrder = await prisma.foodOrder.update({
+      where: { id },
+      data: { status },
+    });
+
+    return NextResponse.json(updatedOrder, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Төлөв шинэчлэхэд алдаа гарлаа" },
+      { status: 500 },
     );
   }
 }

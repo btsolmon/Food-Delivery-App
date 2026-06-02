@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/context/CartContext";
+import { Toast } from "./Toast";
 
 export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
   const [activeTab, setActiveTab] = useState("Cart");
@@ -9,6 +11,14 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
   const [addressError, setAddressError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   // Context-ээс хэрэгтэй функцүүдээ дуудна
   const {
@@ -21,23 +31,33 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
     clearCart,
   } = useContext(CartContext);
 
+  // Хуудас ачаалагдахад localStorage-оос датаг сэргээх
+  useEffect(() => {
+    const savedOrders = localStorage.getItem("orderHistory");
+    if (savedOrders) {
+      setOrders(JSON.parse(savedOrders));
+    }
+  }, []);
+
+  const fetchOrders = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await fetch("/api/orders/my", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+        localStorage.setItem("orderHistory", JSON.stringify(data));
+      }
+    } catch (err) {
+      console.error("Orders татахад алдаа гарлаа:", err);
+    }
+  };
+
   // Захиалгын түүхийг API-аас татах
   useEffect(() => {
-    const fetchOrders = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      try {
-        const res = await fetch("/api/orders/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setOrders(data);
-        }
-      } catch (err) {
-        console.error("Orders татахад алдаа гарлаа:", err);
-      }
-    };
     if (activeTab === "Order") fetchOrders();
   }, [activeTab]);
 
@@ -50,7 +70,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Захиалга хийхийн тулд нэвтэрнэ үү!");
+      triggerToast("Захиалга хийхийн тулд нэвтэрнэ үү!");
       return;
     }
 
@@ -67,6 +87,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
         body: JSON.stringify({
           userId: payload.id,
           totalPrice: total,
+          address: address,
           items: cartItems.map((item: any) => ({
             foodId: item.id,
             quantity: item.quantity,
@@ -75,16 +96,28 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
       });
 
       if (res.ok) {
+        const newOrder = await res.json();
         setShowSuccess(true);
         setAddress("");
+
+        // Сагсыг бүрэн цэвэрлэх
         if (clearCart) clearCart();
+        localStorage.removeItem("cartItems");
+
+        // Захиалгын түүхийг шууд шинэчлэх
+        setOrders((prev) => {
+          const updated = [newOrder, ...prev];
+          localStorage.setItem("orderHistory", JSON.stringify(updated));
+          return updated;
+        });
+
         setTimeout(() => {
           setShowSuccess(false);
           setActiveTab("Order");
         }, 3000);
       }
     } catch (err) {
-      alert("Захиалга илгээхэд алдаа гарлаа.");
+      triggerToast("Захиалга илгээхэд алдаа гарлаа.");
     }
   };
 
@@ -244,14 +277,18 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                           ${(order.totalPrice || 0).toFixed(2)}
                         </span>
                         <span className="font-bold text-lg text-gray-400">
-                          #{order.id.slice(-5).toUpperCase()}
+                          #{order.id?.slice(-5).toUpperCase()}
                         </span>
                       </div>
                       <span
                         className={`text-[12px] px-3 py-1 rounded-full font-bold border ${
+                          order.status === "DELIVERED" ||
                           order.status === "Delivered"
-                            ? "bg-gray-100 border-gray-300 text-gray-500"
-                            : "bg-white border-red-300 text-red-500"
+                            ? "border-green-500 text-green-500 bg-green-50"
+                            : order.status === "CANCELED" ||
+                                order.status === "Canceled"
+                              ? "border-gray-400 text-gray-400 bg-gray-50"
+                              : "border-red-500 text-red-500 bg-red-50"
                         }`}
                       >
                         {order.status}
@@ -267,7 +304,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                         />
                         <p className="truncate w-40">
                           {order.items
-                            ?.map((i: any) => i.food.foodName)
+                            ?.map((i: any) => i.food?.foodName || "Unknown")
                             .join(", ")}
                         </p>
                       </div>
@@ -356,6 +393,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
       )}
+      {showToast && <Toast message={toastMessage} />}
     </>
   );
 };

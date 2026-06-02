@@ -8,6 +8,7 @@ import Image from "next/image";
 import { AddDishModal } from "@/app/components/AddDishModal";
 import { useRouter } from "next/navigation";
 import { AddCategoryModal } from "../components/AddCategoryModal";
+import { Toast } from "../components/Toast";
 
 interface Food {
   id: string;
@@ -35,6 +36,15 @@ export default function AdminDashboard() {
     name: "",
   });
   const [editingFood, setEditingFood] = useState<any | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   // API-аас бүх датагаа татаж авах
   const fetchMenuData = async () => {
     try {
@@ -252,12 +262,13 @@ export default function AdminDashboard() {
             setEditingFood(null); // Модалыг хаах
           } else {
             const errorData = await res.json();
-            alert(
+            triggerToast(
               `Устгах үед алдаа гарлаа: ${errorData.error || "Эрх хүрэлцэхгүй байна"}`,
             );
           }
         }}
       />
+      {showToast && <Toast message={toastMessage} />}
     </div>
   );
 }
