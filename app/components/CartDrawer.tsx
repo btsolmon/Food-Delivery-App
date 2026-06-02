@@ -76,7 +76,13 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
     try {
       // Токеноос userId-г авах
-      const payload = JSON.parse(atob(token.split(".")[1]));
+      const tokenParts = token.split(".");
+      if (tokenParts.length !== 3) {
+        throw new Error("Токен буруу бүтэцтэй байна.");
+      }
+      
+      const base64Payload = tokenParts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(window.atob(base64Payload));
 
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -85,7 +91,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          userId: payload.id,
+          userId: payload.userId || payload.id, // Хоёр хувилбарыг хоёуланг нь шалгана
           totalPrice: total,
           address: address,
           items: cartItems.map((item: any) => ({
@@ -100,11 +106,14 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
         setShowSuccess(true);
         setAddress("");
 
-        // Сагсыг бүрэн цэвэрлэх
-        if (clearCart) clearCart();
+        // 1. Сагсыг Context түвшинд цэвэрлэх (State update)
+        if (clearCart) {
+          clearCart();
+        }
+        // 2. LocalStorage-оос сагсыг устгах (Context-ийн ашигладаг түлхүүр мөн эсэхийг шалгаарай)
         localStorage.removeItem("cartItems");
 
-        // Захиалгын түүхийг шууд шинэчлэх
+        // 3. Захиалгын түүхийг шууд шинэчлэх (Unknown алдаанаас сэргийлнэ)
         setOrders((prev) => {
           const updated = [newOrder, ...prev];
           localStorage.setItem("orderHistory", JSON.stringify(updated));

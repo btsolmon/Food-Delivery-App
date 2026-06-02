@@ -61,7 +61,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/api/orders") || pathname === "/api/users/address") {
     const authHeader = request.headers.get("Authorization");
 
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { error: "Захиалга хийхийн тулд заавал нэвтэрнэ үү" },
         { status: 401 },
@@ -78,6 +78,7 @@ export const config = {
     "/api/foods/:path*",
     "/api/categories/:path*",
     "/api/orders/:path*",
+    "/api/orders",
     "/api/upload/:path*",
     "/api/users/address",
   ],

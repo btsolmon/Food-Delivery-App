@@ -39,6 +39,7 @@ export function ProductCard({ product }: { product: Product }) {
             fill
             sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
             className="object-cover"
+            priority
           />
           <button
             onClick={() => setIsModalOpen(true)}

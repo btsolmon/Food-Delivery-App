@@ -35,7 +35,11 @@ export async function Menu() {
     <section className="bg-primary">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-14 px-6 py-14 sm:px-12 lg:px-[88px]">
         {sections.map((section) => (
-          <div key={section.id} className="flex flex-col gap-6">
+          <div
+            key={section.id}
+            id={section.id}
+            className="flex flex-col gap-6 scroll-mt-24"
+          >
             {/* Категорийн нэр (Манай бэкэндээс categoryName ирнэ) */}
             <h2 className="text-[30px] font-semibold leading-9 tracking-tight text-white">
               {section.categoryName}

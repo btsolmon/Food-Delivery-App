@@ -58,11 +58,36 @@ export default function AdminOrders() {
     );
   };
 
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setOrders(
-      orders.map((o) => (o.id === id ? { ...o, status: newStatus } : o)),
-    );
-    // Энд API дуудаж статус шинэчлэх үйлдлээ хийнэ (PATCH /api/orders/:id)
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+
+      if (res.ok) {
+        setOrders((prev) => {
+          const updated = prev.map((o) =>
+            o.id === id ? { ...o, status: newStatus } : o,
+          );
+          localStorage.setItem("adminOrderCache", JSON.stringify(updated));
+          return updated;
+        });
+      } else if (res.status === 401) {
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error("Status update error:", err);
+    }
   };
 
   return (

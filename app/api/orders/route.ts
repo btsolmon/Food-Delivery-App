@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       include: {
         items: {
           include: {
-            food: true, // Хоолны нэр, зураг зэргийг хариунд цуг авна
+            food: true, // Хоолны нэр, зураг зэргийг хариунд цуг авч "Unknown" алдааг засна
           },
         },
       },

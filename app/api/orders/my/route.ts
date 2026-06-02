@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     const token = authHeader.split(" ")[1];
 
     // 2. Токенийг задалж, дотроос нь Хэрэглэгчийн ID-г авах
-    // Логин хийхэд token дотор userId-г шингээсэн байгаа
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       userId: string;
       role: string;
@@ -25,7 +24,7 @@ export async function GET(request: NextRequest) {
     // 3. Зөвхөн энэ хэрэглэгчийн захиалгуудыг датабэйсээс шүүж авах
     const myOrders = await prisma.foodOrder.findMany({
       where: {
-        userId: decoded.userId, // Зөвхөн өөрийнх нь ID-аар шүүнэ
+        userId: decoded.userId, // Токен дээрх нэртэй тааруулав
       },
       include: {
         items: {
