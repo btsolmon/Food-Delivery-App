@@ -118,10 +118,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
           clearCart();
         }
 
-        // 2. Хаягийг цэвэрлэх
-        setAddress("");
-        localStorage.removeItem("deliveryAddress");
-        window.dispatchEvent(new Event("addressUpdated")); // Header-т мэдэгдэх
+        // 2. Хаягийг цэвэрлэхгүй үлдээвэл дараагийн захиалгад ашиглахад хялбар байна.
 
         // 3. Захиалгын түүхийг шинэчлэх
         const updatedOrders = [newOrder, ...orders];

@@ -15,8 +15,30 @@ export default function Header() {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
+    // 1. Эхлээд локал сторэйжээс уншина
     const saved = localStorage.getItem("deliveryAddress");
     if (saved) setAddress(saved);
+
+    // 2. Хэрэв нэвтэрсэн бол датабэйсээс хаягийг нь баталгаажуулж авч болно
+    const fetchUserAddress = async () => {
+      const token = localStorage.getItem("token");
+      if (!token || saved) return; // Хэрэв хаяг локал сторэйжид байвал заавал дуудах шаардлагагүй
+
+      try {
+        const res = await fetch("/api/users/profile", { // Профайл мэдээлэл авдаг API байна гэж үзвэл
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.address) {
+            setAddress(data.address);
+            localStorage.setItem("deliveryAddress", data.address);
+          }
+        }
+      } catch (e) { console.error(e); }
+    };
+
+    fetchUserAddress();
 
     const handleUpdate = () => {
       setAddress(localStorage.getItem("deliveryAddress") || "");

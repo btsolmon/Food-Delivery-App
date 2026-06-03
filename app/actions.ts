@@ -65,6 +65,7 @@ export async function loginAction(formData: FormData) {
     success: true,
     token: token,
     role: userRole,
+    address: user.address,
   };
 }
 
