@@ -185,16 +185,21 @@ export default function AdminDashboard() {
                         {/* Хоолны зураг */}
                         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-neutral-100">
                           <Image
-                            src={food.image || "/uploads/placeholder.jpg"}
+                            src={food.image ? food.image : "/placeholder.jpg"}
                             alt={food.foodName}
                             fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            priority={true} // 👈 Энэ нь зураг ачаалах дарааллыг хамгийн өндөрт тавина
-                            loading="eager" // 👈 Энэ нь зураг хойшлуулалгүйгээр шууд ачаалахыг хэлнэ
+                            unoptimized
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             className="object-cover"
                           />
                           <button
-                            onClick={() => setEditingFood(food)}
+                            onClick={() => {
+                              setSelectedCategoryForModal({
+                                id: cat.id,
+                                name: cat.categoryName,
+                              });
+                              setEditingFood(food);
+                            }}
                             className="absolute right-3 bottom-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-red-500 text-sm hover:scale-105 transition"
                           >
                             <img

@@ -52,7 +52,10 @@ export function AddDishModal({
       setDescription(foodToEdit.ingredients || "");
       setImagePreview(foodToEdit.image || null);
       // Хэрэв засаж байгаа бол тухайн хоолны өөрийнх нь categoryId-г идэвхжүүлнэ, байхгүй бол тухайн үеийн категорийг авна
-      setSelectedCategoryId(foodToEdit.categoryId || category.id);
+      // foodCategoryId эсвэл categoryId-г шалгана
+      setSelectedCategoryId(
+        foodToEdit.foodCategoryId || foodToEdit.categoryId || category.id,
+      );
     } else {
       setFoodName("");
       setPrice("");
@@ -67,7 +70,7 @@ export function AddDishModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!foodName || !price || !selectedCategoryId) {
+    if (!foodName.trim() || !price || selectedCategoryId === "") {
       triggerToast("Мэдээллийг гүйцэд бөглөнө үү!");
       return;
     }
@@ -78,11 +81,11 @@ export function AddDishModal({
       let imageUrl = imagePreview;
 
       if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        const uploadRes = await fetch("/api/upload", {
+        const sanitizedName = file.name.replace(/\s+/g, "-");
+        // Vercel Blob руу файлыг шууд body-оор дамжуулж хуулна
+        const uploadRes = await fetch(`/api/upload?filename=${sanitizedName}`, {
           method: "POST",
-          body: formData,
+          body: file,
         });
         if (!uploadRes.ok) throw new Error("Зураг хуулахад алдаа гарлаа.");
         const uploadData = await uploadRes.json();

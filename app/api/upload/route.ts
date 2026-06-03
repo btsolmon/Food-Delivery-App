@@ -1,56 +1,24 @@
-import { NextResponse, NextRequest } from "next/server";
-import path from "path";
-import fs from "fs/promises";
+import { put } from "@vercel/blob";
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
-    // 1. Хүсэлтээр ирсэн Форм датаг (FormData) хүлээж авах
-    const formData = await request.formData();
-    const file = formData.get("file") as File;
+    const { searchParams } = new URL(request.url);
+    const filename = searchParams.get("filename");
 
-    // Файл ирээгүй бол алдаа буцаана
-    if (!file) {
+    if (!filename || !request.body) {
       return NextResponse.json(
-        { error: "Файл сонгогдоогүй байна" },
+        { error: "Filename and file content are required" },
         { status: 400 },
       );
     }
 
-    // 2. Файлыг Buffer руу хөрвүүлэх (Сервер дээр хадгалахад бэлдэх)
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const blob = await put(filename, request.body, {
+      access: "public",
+    });
 
-    // 3. Файлын нэрийг давхцахгүй болгох үүднээс Timestamp нэмэх (Жишээ нь: 1715849201-pizza.jpg)
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const fileExtension = path.extname(file.name);
-    const fileName = `${file.name.replace(fileExtension, "")}-${uniqueSuffix}${fileExtension}`;
-
-    // 4. Хадгалах замыг зааж өгөх (public/uploads/ хавтас руу)
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    const filePath = path.join(uploadDir, fileName);
-
-    // public/uploads хавтас байхгүй бол автоматаар үүсгэх хамгаалалт
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // 5. Файлыг заасан замд хадгалах
-    await fs.writeFile(filePath, buffer);
-
-    // 6. Фронт-энд уншиж болохуйц URL хаягийг буцаах
-    // Жишээ нь: /uploads/pizza-1715849201.jpg
-    const fileUrl = `/uploads/${fileName}`;
-
-    return NextResponse.json(
-      {
-        message: "Зураг амжилттай ачаалагдлаа",
-        url: fileUrl,
-      },
-      { status: 200 },
-    );
+    return NextResponse.json(blob);
   } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json(
-      { error: "Зураг хуулахад алдаа гарлаа" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

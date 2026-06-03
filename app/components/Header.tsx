@@ -25,8 +25,9 @@ export default function Header() {
       if (!token || saved) return; // Хэрэв хаяг локал сторэйжид байвал заавал дуудах шаардлагагүй
 
       try {
-        const res = await fetch("/api/users/profile", { // Профайл мэдээлэл авдаг API байна гэж үзвэл
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await fetch("/api/users/profile", {
+          // Профайл мэдээлэл авдаг API байна гэж үзвэл
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
@@ -35,7 +36,9 @@ export default function Header() {
             localStorage.setItem("deliveryAddress", data.address);
           }
         }
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     fetchUserAddress();

@@ -3,6 +3,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AdminOrders() {
   const router = useRouter();
@@ -220,8 +221,16 @@ export default function AdminOrders() {
                         key={item.food.id}
                         className="flex flex-col items-center gap-1 w-20"
                       >
-                        <img
-                          src={item.food.image}
+                        <Image
+                          src={
+                            item.food.image
+                              ? item.food.image
+                              : "/placeholder.jpg"
+                          }
+                          alt={item.food.foodName}
+                          width={48}
+                          height={48}
+                          unoptimized
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <span className="text-[9px] text-center truncate w-full">
