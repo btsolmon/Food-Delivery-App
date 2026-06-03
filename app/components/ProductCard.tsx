@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ProductModal } from "./ProductModal";
 import Image from "next/image";
 import { Toast } from "./Toast";
+import { CartContext } from "@/context/CartContext";
 
 export type Product = {
   id?: string;
@@ -15,15 +16,13 @@ export type Product = {
 export function ProductCard({ product }: { product: Product }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const { addToCart } = useContext(CartContext);
 
-  const handleAddToCart = () => {
-    // 1. Сагсанд нэмэх логик
-    // ... addToCart(product) ...
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Модаль цонх нээгдэхээс сэргийлнэ
 
-    // 2. Notification-ыг харуулах
+    addToCart(product, 1);
     setShowToast(true);
-
-    // 3. 3 секундын дараа автоматаар хаах
     setTimeout(() => {
       setShowToast(false);
     }, 3000);
@@ -31,7 +30,10 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <>
-      <article className="flex flex-col gap-5 rounded-[20px] bg-white p-4">
+      <article
+        className="flex flex-col gap-5 rounded-[20px] bg-white p-4 cursor-pointer hover:scale-105 transition duration-300 "
+        onClick={() => setIsModalOpen(true)}
+      >
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
           <Image
             src={product.image}
@@ -42,7 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
             priority
           />
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleAddToCart}
             type="button"
             aria-label={`Add ${product.name} to cart`}
             className="absolute right-5 bottom-5 flex size-11 items-center justify-center rounded-full bg-white text-red-500 shadow-sm transition hover:scale-120 cursor-pointer"
@@ -78,6 +80,7 @@ export function ProductCard({ product }: { product: Product }) {
       {isModalOpen && (
         <ProductModal product={product} onClose={() => setIsModalOpen(false)} />
       )}
+      {showToast && <Toast message="Added to cart!" />}
     </>
   );
 }
