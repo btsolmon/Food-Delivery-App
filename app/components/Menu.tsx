@@ -37,7 +37,7 @@ export async function Menu() {
         {sections.map((section) => (
           <div
             key={section.id}
-            id={section.id}
+            id={section.categoryName}
             className="flex flex-col gap-6 scroll-mt-24"
           >
             {/* Категорийн нэр (Манай бэкэндээс categoryName ирнэ) */}

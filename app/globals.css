@@ -26,11 +26,19 @@ body {
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-marquee-custom {
   display: inline-block;
   animation: marquee 20s linear infinite;
+}
+
+html {
+  scroll-behavior: smooth;
 }

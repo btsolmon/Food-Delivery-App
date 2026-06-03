@@ -5,11 +5,17 @@ const menuSections = [
   { title: "Nomnom", links: ["Home", "Contact us", "Delivery zone"] },
   {
     title: "Menu",
-    links: ["Appetizers", "Salads", "Pizzas", "Main dishes", "Desserts"],
+    links: [
+      "Appetizers",
+      "Salads",
+      "Lunch Favorites",
+      "Main dishes",
+      "Fish & Sea Foods",
+    ],
   },
   {
     title: "",
-    links: ["Side dish", "Brunch", "Desserts", "Beverages", "Fish & Sea foods"],
+    links: ["Brunch", "Side Dishes", "Desserts", "Beverages"],
   },
 ];
 
@@ -49,7 +55,10 @@ export default function Footer() {
               <ul className="space-y-3 text-4 font-medium">
                 {section.links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="hover:text-white transition-colors">
+                    <a
+                      href={link === "Home" ? "/" : `/#${link}`}
+                      className="hover:text-white transition-colors"
+                    >
                       {link}
                     </a>
                   </li>
