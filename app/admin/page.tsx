@@ -122,7 +122,7 @@ export default function AdminDashboard() {
         {/* Дээд талын категорын таб хэсэг */}
         <div className="bg-white p-6 rounded-2xl border border-neutral-100 space-y-4 shadow-sm">
           <h2 className="font-bold text-lg">Dishes category</h2>
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex flex-wrap gap-4 items-center">
             <button
               onClick={() => setActiveTab("All")}
               className={`px-4 py-2 rounded-full text-xs font-semibold transition ${activeTab === "All" ? "bg-red-500 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}

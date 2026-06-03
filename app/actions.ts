@@ -16,6 +16,9 @@ const passwordRegex =
 // 🔐 JWT Нууц үг (Продюшн дээр .env-ээс уншина, байхгүй бол түр ашиглах утга)
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key-123";
 
+// 🌐 Үндсэн URL (Продюшн дээр заавал .env-д тохируулах, жишээ нь: https://your-site.netlify.app)
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -119,7 +122,7 @@ export async function registerAction(formData: FormData) {
       from: "onboarding@resend.dev",
       to: email,
       subject: "Verify your email",
-      html: `<p>Click <a href="http://localhost:3000/verify?email=${email}">here</a> to verify your account</p>`,
+      html: `<p>Click <a href="${BASE_URL}/verify?email=${email}">here</a> to verify your account</p>`,
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -152,7 +155,7 @@ export async function sendResetLinkAction(formData: FormData) {
       html: `
         <h1>Reset your password</h1>
         <p>You requested a password reset. Click the link below to continue:</p>
-        <a href="http://localhost:3000/reset-password?email=${email}">Reset Password</a>
+        <a href="${BASE_URL}/reset-password?email=${email}">Reset Password</a>
         <p>If you didn't request this, please ignore this email.</p>
       `,
     });

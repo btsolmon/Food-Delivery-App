@@ -37,6 +37,15 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     }
+
+    const savedAddress = localStorage.getItem("deliveryAddress");
+    if (savedAddress) setAddress(savedAddress);
+
+    const handleUpdate = () => {
+      setAddress(localStorage.getItem("deliveryAddress") || "");
+    };
+    window.addEventListener("addressUpdated", handleUpdate);
+    return () => window.removeEventListener("addressUpdated", handleUpdate);
   }, []);
 
   const fetchOrders = async () => {
@@ -80,7 +89,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
       if (tokenParts.length !== 3) {
         throw new Error("Токен буруу бүтэцтэй байна.");
       }
-      
+
       const base64Payload = tokenParts[1].replace(/-/g, "+").replace(/_/g, "/");
       const payload = JSON.parse(window.atob(base64Payload));
 
@@ -103,23 +112,23 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
       if (res.ok) {
         const newOrder = await res.json();
-        setShowSuccess(true);
-        setAddress("");
 
-        // 1. Сагсыг Context түвшинд цэвэрлэх (State update)
+        // 1. Сагсыг Context болон State түвшинд шууд цэвэрлэх
         if (clearCart) {
           clearCart();
         }
-        // 2. LocalStorage-оос сагсыг устгах (Context-ийн ашигладаг түлхүүр мөн эсэхийг шалгаарай)
-        localStorage.removeItem("cartItems");
 
-        // 3. Захиалгын түүхийг шууд шинэчлэх (Unknown алдаанаас сэргийлнэ)
-        setOrders((prev) => {
-          const updated = [newOrder, ...prev];
-          localStorage.setItem("orderHistory", JSON.stringify(updated));
-          return updated;
-        });
+        // 2. Хаягийг цэвэрлэх
+        setAddress("");
+        localStorage.removeItem("deliveryAddress");
+        window.dispatchEvent(new Event("addressUpdated")); // Header-т мэдэгдэх
 
+        // 3. Захиалгын түүхийг шинэчлэх
+        const updatedOrders = [newOrder, ...orders];
+        setOrders(updatedOrders);
+        localStorage.setItem("orderHistory", JSON.stringify(updatedOrders));
+
+        setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
           setActiveTab("Order");
@@ -245,7 +254,11 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                     placeholder="Please share your complete address"
                     value={address}
                     onChange={(e) => {
-                      setAddress(e.target.value);
+                      const val = e.target.value;
+                      setAddress(val);
+                      // Сагсан дотроос хаягаа өөрчилсөн ч Header-т мэдэгдэнэ
+                      localStorage.setItem("deliveryAddress", val);
+                      window.dispatchEvent(new Event("addressUpdated"));
                       if (addressError) setAddressError(false);
                     }}
                   />
@@ -351,34 +364,38 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         {/* 3. PAYMENT INFO (Динамик үнийн дүнтэй) */}
-        <div className="bg-white text-gray-500 rounded-3xl p-6">
-          <h3 className="font-bold mb-4 text-[20px]">Payment info</h3>
-          <div className="space-y-2 text-[16px]">
-            <div className="flex justify-between">
-              <span>Items</span>
-              <span className="font-bold text-black">
-                ${itemsTotal.toFixed(2)}
-              </span>
+        {activeTab === "Cart" && (
+          <div className="bg-white text-gray-500 rounded-3xl p-6">
+            <h3 className="font-bold mb-4 text-[20px]">Payment info</h3>
+            <div className="space-y-2 text-[16px]">
+              <div className="flex justify-between">
+                <span>Items</span>
+                <span className="font-bold text-black">
+                  ${itemsTotal.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping</span>
+                <span className="font-bold text-black">
+                  ${shipping.toFixed(2)}
+                </span>
+              </div>
+              <div className="border-t border-dashed border-gray-300 my-2"></div>
+              <div className="flex justify-between text-base">
+                <span>Total</span>
+                <span className="font-bold text-black">
+                  ${total.toFixed(2)}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Shipping</span>
-              <span className="font-bold text-black">
-                ${shipping.toFixed(2)}
-              </span>
-            </div>
-            <div className="border-t border-dashed border-gray-300 my-2"></div>
-            <div className="flex justify-between text-base">
-              <span>Total</span>
-              <span className="font-bold text-black">${total.toFixed(2)}</span>
-            </div>
+            <button
+              onClick={handleCheckout}
+              className={`w-full py-3 rounded-3xl font-bold mt-6 ${cartItems.length > 0 ? "bg-[#ff5252] text-white" : "bg-[#fcdbd9] text-white cursor-not-allowed"}`}
+            >
+              Checkout
+            </button>
           </div>
-          <button
-            onClick={handleCheckout}
-            className={`w-full py-3 rounded-3xl font-bold mt-6 ${cartItems.length > 0 ? "bg-[#ff5252] text-white" : "bg-[#fcdbd9] text-white cursor-not-allowed"}`}
-          >
-            Checkout
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Success Modal */}

@@ -33,6 +33,10 @@ export const AddressModal = ({ onClose }: any) => {
 
       if (!res.ok) throw new Error("Хаяг хадгалж чадсангүй");
 
+      // Хаягийг локал болон бусад компонентуудад синхрончлох
+      localStorage.setItem("deliveryAddress", address);
+      window.dispatchEvent(new Event("addressUpdated"));
+
       triggerToast("Хаяг амжилттай хадгалагдлаа!");
       setTimeout(() => {
         onClose();

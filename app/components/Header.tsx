@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { Container } from "./Container";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AddressModal } from "./AddressModal";
 import { UserDropdown } from "./UserDropdown";
 import { CartDrawer } from "./CartDrawer";
@@ -11,6 +12,18 @@ export default function Header() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("deliveryAddress");
+    if (saved) setAddress(saved);
+
+    const handleUpdate = () => {
+      setAddress(localStorage.getItem("deliveryAddress") || "");
+    };
+    window.addEventListener("addressUpdated", handleUpdate);
+    return () => window.removeEventListener("addressUpdated", handleUpdate);
+  }, []);
 
   return (
     <header className="w-full h-17 bg-black">
@@ -31,8 +44,10 @@ export default function Header() {
               cursor-pointer"
             >
               <img src="/locationicon.svg" alt="location" className="" />
-              <p className="text-red-500">Delivery address:</p>
-              <p className="text-gray-500">Add Location</p>
+              <p className="text-red-500 shrink-0">Delivery address:</p>
+              <p className="text-gray-500 truncate max-w-[150px]">
+                {address || "Add Location"}
+              </p>
               <img src="/chevronright.svg" alt="location" className="" />
             </button>
             <button
