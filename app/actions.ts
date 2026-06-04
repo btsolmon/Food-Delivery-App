@@ -20,53 +20,58 @@ const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key-123";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-  if (!email || !password) {
-    return { error: "Enter your email and password." };
+    if (!email || !password) {
+      return { error: "Enter your email and password." };
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return { error: "Invalid email. Use a format like example@email.com." };
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password || "");
+
+    if (!isMatch) {
+      return { error: "Incorrect password. Please try again." };
+    }
+
+    // 🔑 1. УХААЛАГ ШАЛГАЛТ: Хэрэв чиний нэвтэрсэн имэйл чинь Prisma Studio дээр сольсон админ имэйл мөн бол
+    // Эсвэл датабэйс дээрээс role-ийг нь уншиж чадвал ADMIN эрх өгнө.
+    // (Жишээ нь: Чиний админ имэйл 'admin@email.com' бол доорхийг өөрийнхөөрөө солиорой)
+    const userRole =
+      (user as any).role ||
+      (email === "btsolmon.mn@gmail.com" ? "ADMIN" : "USER");
+
+    // 🔑 2. Одоо userRole-ийг токен руу шингээнэ
+    const token = jwt.sign({ id: user.id, role: userRole }, JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // 🔑 3. Токенийг Күүки (Cookie) рүү хадгалах
+    const cookieStore = await cookies();
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    // 🔑 4. Фронт-энд рүү зөв ролийг буцаах
+    return {
+      success: true,
+      token: token,
+      role: userRole,
+      address: user.address,
+    };
+  } catch (error) {
+    console.error("Login Server Action Error:", error);
+    return { error: "Internal server error occurred." };
   }
-
-  const user = await prisma.user.findUnique({ where: { email } });
-
-  if (!user) {
-    return { error: "Invalid email. Use a format like example@email.com." };
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password || "");
-
-  if (!isMatch) {
-    return { error: "Incorrect password. Please try again." };
-  }
-
-  // 🔑 1. УХААЛАГ ШАЛГАЛТ: Хэрэв чиний нэвтэрсэн имэйл чинь Prisma Studio дээр сольсон админ имэйл мөн бол
-  // Эсвэл датабэйс дээрээс role-ийг нь уншиж чадвал ADMIN эрх өгнө.
-  // (Жишээ нь: Чиний админ имэйл 'admin@email.com' бол доорхийг өөрийнхөөрөө солиорой)
-  const userRole =
-    (user as any).role ||
-    (email === "btsolmon.mn@gmail.com" ? "ADMIN" : "USER");
-
-  // 🔑 2. Одоо userRole-ийг токен руу шингээнэ
-  const token = jwt.sign({ id: user.id, role: userRole }, JWT_SECRET, {
-    expiresIn: "1d",
-  });
-
-  // 🔑 3. Токенийг Күүки (Cookie) рүү хадгалах
-  const cookieStore = await cookies();
-  cookieStore.set("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24,
-  });
-
-  // 🔑 4. Фронт-энд рүү зөв ролийг буцаах
-  return {
-    success: true,
-    token: token,
-    role: userRole,
-    address: user.address,
-  };
 }
 
 export async function registerAction(formData: FormData) {

@@ -89,7 +89,7 @@ export default function AdminDashboard() {
         <div className="space-y-8">
           {/* Лого хэсэг */}
           <div className="flex items-center gap-3">
-            <img src="/logo.svg" alt="logo" className="h-[29.18px] w-[36px]" />
+            <img src="/Logo.svg" alt="logo" className="h-[29.18px] w-[36px]" />
             <div>
               <h1 className="font-bold text-base leading-none text-[18px]">
                 NomNom
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
           <nav className="space-y-6">
             <button className="w-full flex items-center gap-[10px] bg-black text-white px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm">
               <span className="text-lg">
-                <img src="/dashboardicon.svg" alt="" />
+                <img src="/DashboardIcon.svg" alt="" />
               </span>{" "}
               Food menu
             </button>
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
               onClick={() => router.push("/admin/orders")}
               className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm"
             >
-              <img src="/truckicon.svg" alt="" />
+              <img src="/TruckIcon.svg" alt="" />
               Orders
             </button>
           </nav>
