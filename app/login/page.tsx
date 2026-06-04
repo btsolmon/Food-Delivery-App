@@ -130,8 +130,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-zinc-300 px-3 py-2 text-sm font-medium text-white disabled:opacity-50 mt-6 "
+            disabled={loading || password.length < 6}
+            className={`w-full rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 cursor-pointer ${
+              password.length >= 6 ? "bg-black" : "bg-zinc-300"
+            } disabled:opacity-50 mt-6`}
           >
             {loading ? "..." : "Let's Go"}
           </button>
