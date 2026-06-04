@@ -20,9 +20,9 @@ export async function GET() {
     });
 
     // Фронт-эндэд тохируулан талбарын нэрийг солих (Mapping)
-    const formattedCategories = categories.map((cat) => ({
+    const formattedCategories = categories.map((cat: any) => ({
       ...cat,
-      foods: cat.foods.map((food) => ({
+      foods: cat.foods.map((food: any) => ({
         ...food,
         description: food.ingredients, // ingredients-ийг description болгож явуулна
       })),
