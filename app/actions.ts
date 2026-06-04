@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { Resend } from "resend";
 import jwt from "jsonwebtoken"; // 🔑 Токен үүсгэхэд хэрэгтэй сан
-import { cookies } from "next/headers"; // 🔑 Күүки хадгалах Next.js сан
+import { cookies, headers } from "next/headers"; // 🔑 Күүки болон Header ашиглах
 
 const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
@@ -15,9 +15,6 @@ const passwordRegex =
 
 // 🔐 JWT Нууц үг (Продюшн дээр .env-ээс уншина, байхгүй бол түр ашиглах утга)
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key-123";
-
-// 🌐 Үндсэн URL (Продюшн дээр заавал .env-д тохируулах, жишээ нь: https://your-site.netlify.app)
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export async function loginAction(formData: FormData) {
   try {
@@ -79,6 +76,11 @@ export async function registerAction(formData: FormData) {
   const password = formData.get("password")?.toString() || "";
   const confirm = formData.get("confirm")?.toString() || "";
 
+  // Тухайн үед ажиллаж байгаа домэйн хаягийг (host) авах
+  const host = (await headers()).get("host");
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+
   // 1. Validation
   if (!email || !password || !confirm) {
     return { error: "Fill in all fields." };
@@ -128,7 +130,7 @@ export async function registerAction(formData: FormData) {
       from: "onboarding@resend.dev",
       to: email,
       subject: "Verify your email",
-      html: `<p>Click <a href="${BASE_URL}/verify?email=${email}">here</a> to verify your account</p>`,
+      html: `<p>Click <a href="${baseUrl}/verify?email=${email}">here</a> to verify your account</p>`,
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -140,6 +142,11 @@ export async function registerAction(formData: FormData) {
 
 export async function sendResetLinkAction(formData: FormData) {
   const email = formData.get("email")?.toString().toLowerCase().trim() || "";
+
+  // Тухайн үед ажиллаж байгаа домэйн хаягийг (host) авах
+  const host = (await headers()).get("host");
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
 
   if (!emailRegex.test(email)) {
     return { error: "Invalid email. Use a format like example@email.com" };
@@ -161,7 +168,7 @@ export async function sendResetLinkAction(formData: FormData) {
       html: `
         <h1>Reset your password</h1>
         <p>You requested a password reset. Click the link below to continue:</p>
-        <a href="${BASE_URL}/reset-password?email=${email}">Reset Password</a>
+        <a href="${baseUrl}/reset-password?email=${email}">Reset Password</a>
         <p>If you didn't request this, please ignore this email.</p>
       `,
     });

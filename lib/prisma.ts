@@ -3,10 +3,10 @@ import pg from "pg"; // <-- Заавал pg багцаас pool-ээ оруул�
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
-const connectionString = process.env.NEXT_PUBLIC_DATABASE_URL;
+const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error("NEXT_PUBLIC_DATABASE_URL is not defined in .env file");
+  throw new Error("DATABASE_URL is not defined in .env file");
 }
 
 // PrismaPg адаптерт заавал pg.Pool-ийг дамжуулж өгөх ёстой
