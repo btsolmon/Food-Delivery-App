@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { updatePasswordAction } from "@/app/actions";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
@@ -114,5 +114,19 @@ export default function ResetPasswordPage() {
         />
       </div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-dvh flex items-center justify-center text-black">
+          Loading...
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma } from "@/app/generated/prisma"; // Клиент үүссэн зөв замаар оруулна
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs"; // bun add bcryptjs болон bun add -d @types/bcryptjs хийгээрэй
 
 // 1. Бүх хэрэглэгчдийг авах (GET)
-export const GET = async () => {
+export async function GET() {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -26,10 +26,10 @@ export const GET = async () => {
       { status: 500 },
     );
   }
-};
+}
 
 // 2. Шинэ хэрэглэгч бүртгэх (POST)
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   try {
     const data: Prisma.UserCreateInput = await req.json();
 
@@ -69,4 +69,4 @@ export const POST = async (req: NextRequest) => {
       { status: 500 },
     );
   }
-};
+}
