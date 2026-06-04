@@ -6,6 +6,8 @@ import { Container } from "./Container";
 import { useState, useEffect } from "react";
 import { AddressModal } from "./AddressModal";
 import { UserDropdown } from "./UserDropdown";
+import { useContext } from "react";
+import { CartContext } from "@/context/CartContext";
 import { CartDrawer } from "./CartDrawer";
 
 export default function Header() {
@@ -13,6 +15,7 @@ export default function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [address, setAddress] = useState("");
+  const { cartItems } = useContext(CartContext);
 
   useEffect(() => {
     // 1. Эхлээд локал сторэйжээс уншина
@@ -81,9 +84,14 @@ export default function Header() {
             </button>
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-9 h-9 bg-white rounded-3xl cursor-pointer"
+              className="relative w-9 h-9 bg-white rounded-3xl cursor-pointer flex items-center justify-center"
             >
               <img src="/ShoppingCart.svg" alt="shopping cart" />
+              {cartItems.length > 0 && !isCartOpen && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              )}
             </button>
 
             {/* ЗӨВ БҮТЭЦ: Dropdown-ыг товчлуурын дотор биш, гадна нь relative контейнерт хийнэ */}

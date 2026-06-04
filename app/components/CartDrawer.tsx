@@ -387,7 +387,13 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
             </div>
             <button
               onClick={handleCheckout}
-              className={`w-full py-3 rounded-3xl font-bold mt-6 ${cartItems.length > 0 ? "bg-[#ff5252] text-white" : "bg-[#fcdbd9] text-white cursor-not-allowed"}`}
+              disabled={cartItems.length === 0}
+              className={`w-full py-3 rounded-3xl font-bold mt-6 transition-all duration-200 
+    ${
+      cartItems.length > 0
+        ? "bg-[#ff5252] text-white hover:bg-[black] active:bg-[#e04848] cursor-pointer"
+        : "bg-[#fcdbd9] text-white cursor-not-allowed"
+    }`}
             >
               Checkout
             </button>
