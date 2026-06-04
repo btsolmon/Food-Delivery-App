@@ -38,9 +38,9 @@ export default function Footer() {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-start flex-wrap gap-8 mb-1 pt-16 pb-8">
           <div className="flex flex-col items-center gap-3 cursor-pointer">
-            <img src="/logo.svg" alt="logo" className="h-[37px] w-[46px]" />
+            <img src="/Logo.svg" alt="logo" className="h-[37px] w-[46px]" />
             <div className="flex flex-col text-white gap-1">
-              <img src="logoname.svg" alt="NomNom" className="h-auto w-22" />
+              <img src="/LogoName.svg" alt="NomNom" className="h-auto w-22" />
               <p className="text-sm">Swift delivery</p>
             </div>
           </div>
@@ -71,8 +71,8 @@ export default function Footer() {
               Follow us
             </h3>
             <div className="flex space-x-4 text-xl">
-              <img src="/instagram.svg" alt="Instagram" className="h-6 w-6" />
-              <img src="/facebook.svg" alt="Facebook" className="h-6 w-6" />
+              <img src="/Instagram.svg" alt="Instagram" className="h-6 w-6" />
+              <img src="/Facebook.svg" alt="Facebook" className="h-6 w-6" />
             </div>
           </div>
         </div>

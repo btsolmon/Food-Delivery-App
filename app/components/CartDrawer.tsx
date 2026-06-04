@@ -143,7 +143,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
       <div className="fixed top-0 right-0 h-full w-[535px] bg-[#333333] z-[101] p-5 shadow-2xl flex flex-col gap-[24px] rounded-l-2xl">
         <div className="flex justify-between">
           <h2 className="text-white text-[20px] font-semibold flex gap-3">
-            <img src="/shoppingcartwhite.svg" alt="cart" /> Order detail
+            <img src="/ShoppingCartWhite.svg" alt="cart" /> Order detail
           </h2>
           <button
             onClick={onClose}
@@ -176,7 +176,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                 <h2 className="text-xl font-bold mb-4">My cart</h2>
                 <div className="bg-gray-100 rounded-xl p-[32px] flex flex-col items-center justify-center gap-2">
                   <img
-                    src="/logo.svg"
+                    src="/Logo.svg"
                     alt="empty"
                     className="w-[61px] h-[50px]"
                   />
@@ -274,7 +274,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
               {orders.length === 0 ? (
                 <div className="bg-gray-100 rounded-xl p-[32px] flex flex-col items-center justify-center gap-2">
                   <img
-                    src="/logo.svg"
+                    src="/Logo.svg"
                     alt="empty"
                     className="w-[61px] h-[50px]"
                   />
@@ -317,7 +317,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                     <div className="flex items-center justify-between gap-1 text-xs text-gray-500">
                       <div className="flex gap-1">
                         <img
-                          src="/orderproducticon.svg"
+                          src="/OrderProductIcon.svg"
                           alt="empty"
                           className="w-[12px] h-[12px]"
                         />
@@ -338,7 +338,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
                     <div className="flex items-center gap-1 text-xs text-gray-500">
                       <img
-                        src="/orderproductdateicon.svg"
+                        src="/OrderProductDateIcon.svg"
                         alt="empty"
                         className="w-[12px] h-[12px]"
                       />{" "}
@@ -347,7 +347,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
                     <p className="flex items-center gap-1 text-xs text-gray-500">
                       <img
-                        src="/orderproductaddressicon.svg"
+                        src="/OrderProductAddressIcon.svg"
                         alt="empty"
                         className="w-[12px] h-[12px]"
                       />

@@ -58,7 +58,7 @@ export default function Header() {
             <img src="/Logo.svg" alt="logo" className="h-[37.29px] w-[46px]" />
             <div className="flex flex-col justify-center gap-1">
               <img
-                src="/logoname.svg"
+                src="/LogoName.svg"
                 alt="logo name"
                 className="h-auto w-22"
               />
@@ -72,18 +72,18 @@ export default function Header() {
               className="flex justify-center items-center h-9 bg-white rounded-3xl text-sm px-4 gap-1
               cursor-pointer"
             >
-              <img src="/locationicon.svg" alt="location" className="" />
+              <img src="/LocationIcon.svg" alt="location" className="" />
               <p className="text-red-500 shrink-0">Delivery address:</p>
               <p className="text-gray-500 truncate max-w-[150px]">
                 {address || "Add Location"}
               </p>
-              <img src="/chevronright.svg" alt="location" className="" />
+              <img src="/ChevronRight.svg" alt="location" className="" />
             </button>
             <button
               onClick={() => setIsCartOpen(true)}
               className="w-9 h-9 bg-white rounded-3xl cursor-pointer"
             >
-              <img src="/shoppingcart.svg" alt="shopping cart" />
+              <img src="/ShoppingCart.svg" alt="shopping cart" />
             </button>
 
             {/* ЗӨВ БҮТЭЦ: Dropdown-ыг товчлуурын дотор биш, гадна нь relative контейнерт хийнэ */}
@@ -92,7 +92,7 @@ export default function Header() {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="w-9 h-9 bg-red-500 rounded-3xl cursor-pointer flex items-center justify-center"
               >
-                <img src="/user.svg" alt="user" />
+                <img src="/User.svg" alt="user" />
               </button>
 
               {isUserMenuOpen &&
