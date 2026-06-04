@@ -6,12 +6,17 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function AdminOrders() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [newStatus, setNewStatus] = useState("");
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // Хуудас ачаалагдахад localStorage-оос датаг сэргээх
   useEffect(() => {
@@ -47,11 +52,38 @@ export default function AdminOrders() {
   }, []);
 
   // Pagination логик
-  const totalPages = Math.max(1, Math.ceil(orders.length / ITEMS_PER_PAGE));
-  const currentOrders = orders.slice(
+  // Огноогоор шүүх логик
+  const filteredOrders = orders.filter((order) => {
+    if (!startDate && !endDate) return true; // Шүүлтүүр хоосон бол бүгдийг харуулна
+
+    const orderTime = new Date(order.createdAt).getTime();
+
+    // Эхлэх огноо (00:00:00)
+    const startTime = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : 0;
+
+    // Дуусах огноо (23:59:59)
+    const endTime = endDate
+      ? new Date(endDate).setHours(23, 59, 59, 999)
+      : 9999999999999;
+
+    return orderTime >= startTime && orderTime <= endTime;
+  });
+
+  // Pagination-ийг filteredOrders ашигладаг болгох
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredOrders.length / ITEMS_PER_PAGE),
+  );
+  const currentOrders = filteredOrders.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
+
+  // Шүүлтүүр өөрчлөгдөхөд хуудсыг 1 рүү буцаана
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [startDate, endDate]);
 
   const toggleSelectAll = () => {
     setSelectedOrders(
@@ -124,11 +156,62 @@ export default function AdminOrders() {
 
       <main className="flex-1 p-8 space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
         <div className="bg-white p-8 rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Orders</h1>
-            <span className="text-sm text-neutral-500">
-              {orders.length} items total
-            </span>
+          <div className="flex items-center justify-between">
+            <div className=" ml-4 mb-6">
+              <h1 className="text-2xl font-bold">Orders</h1>
+              <span className="text-sm text-neutral-500">
+                {orders.length} items total
+              </span>
+            </div>
+            <div className="ml-4 mb-6 flex flex-wrap gap-4 items-end">
+              <div className="flex items-center gap-2 bg-white border border-neutral-200 px-4 py-2 rounded-3xl shadow-sm">
+                <input
+                  type="date"
+                  className="outline-none text-sm text-neutral-600"
+                  onChange={(e) => setStartDate(e.target.value)}
+                  value={startDate}
+                />
+                <span className="text-neutral-300">-</span>
+                <input
+                  type="date"
+                  className="outline-none text-sm text-neutral-600"
+                  onChange={(e) => setEndDate(e.target.value)}
+                  value={endDate}
+                />
+              </div>
+
+              {(startDate || endDate) && (
+                <button
+                  onClick={() => {
+                    setStartDate("");
+                    setEndDate("");
+                  }}
+                  className="text-xs text-red-500 hover:underline px-2 cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
+              <div>
+                <button
+                  disabled={selectedOrders.length === 0}
+                  onClick={() => {
+                    setSelectedOrderId(null); // Олноор засах горим
+                    setNewStatus("PENDING");
+                    setIsModalOpen(true);
+                  }}
+                  className={` flex items-center px-4 py-2 rounded-full text-[14px] font-semibold shadow-sm transition-all ${
+                    selectedOrders.length > 0
+                      ? "bg-black text-white hover:bg-neutral-800 cursor-pointer"
+                      : "bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200"
+                  }`}
+                >
+                  Change delivery state{" "}
+                  {selectedOrders.length > 0
+                    ? `(${selectedOrders.length})`
+                    : ""}
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-[40px_80px_160px_120px_150px_100px_1fr_150px] min-w-[1000px] gap-4 px-4 pb-4 border-b border-neutral-100 text-[14px] font-bold text-neutral-400">
@@ -286,6 +369,60 @@ export default function AdminOrders() {
           )}
         </div>
       </main>
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-2xl shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-[14px] font-bold">Change delivery state</p>{" "}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors ml-4"
+              >
+                <span className="text-lg">✕</span>
+              </button>
+            </div>
+            <div className="flex gap-3 mb-8 text-[12px]">
+              {["DELIVERED", "PENDING", "CANCELED"].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setNewStatus(status)}
+                  className={`px-4 py-2 rounded-full font-bold transition-all border ${
+                    newStatus === status
+                      ? status === "PENDING"
+                        ? "border-red-500 text-red-500 bg-red-50"
+                        : status === "DELIVERED"
+                          ? "border-green-500 text-green-500 bg-green-50"
+                          : "border-gray-400 text-gray-400 bg-gray-50"
+                      : "bg-neutral-50 border-transparent text-neutral-400"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={async () => {
+                if (selectedOrderId) {
+                  await handleStatusChange(selectedOrderId, newStatus);
+                } else if (selectedOrders.length > 0) {
+                  // Сонгосон бүх захиалгыг шинэчлэх
+                  await Promise.all(
+                    selectedOrders.map((id) =>
+                      handleStatusChange(id, newStatus),
+                    ),
+                  );
+                  setSelectedOrders([]); // Сонголтыг цэвэрлэх
+                }
+                setIsModalOpen(false);
+              }}
+              className="w-full bg-black text-white py-2 rounded-3xl font-semibold cursor-pointer hover:bg-neutral-800 transition-all shadow-sm"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
