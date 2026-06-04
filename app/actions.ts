@@ -7,7 +7,7 @@ import { Resend } from "resend";
 import jwt from "jsonwebtoken"; // 🔑 Токен үүсгэхэд хэрэгтэй сан
 import { cookies } from "next/headers"; // 🔑 Күүки хадгалах Next.js сан
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex =
