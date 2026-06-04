@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                             className="absolute right-3 bottom-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-red-500 text-sm hover:scale-105 transition"
                           >
                             <img
-                              src="edit.svg"
+                              src="/edit.svg"
                               alt="Edit"
                               className="w-4 h-4"
                             />
