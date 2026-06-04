@@ -57,7 +57,7 @@ export const AddressModal = ({ onClose }: any) => {
 
             <button
               onClick={onClose}
-              className=" text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors"
+              className=" text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors cursor-pointer"
             >
               <span className="text-lg">✕</span>
             </button>
@@ -70,13 +70,13 @@ export const AddressModal = ({ onClose }: any) => {
           <div className="flex justify-end gap-2 text-[14px]">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg "
+              className="px-4 py-2 border border-gray-300 rounded-lg cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-black text-white rounded-lg"
+              className="px-4 py-2 bg-black text-white rounded-lg cursor-pointer"
             >
               Deliver Here
             </button>

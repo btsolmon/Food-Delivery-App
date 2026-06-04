@@ -386,7 +386,7 @@ export default function AdminOrders() {
                 <button
                   key={status}
                   onClick={() => setNewStatus(status)}
-                  className={`px-4 py-2 rounded-full font-bold transition-all border ${
+                  className={`px-4 py-2 rounded-full font-bold transition-all border cursor-pointer ${
                     newStatus === status
                       ? status === "PENDING"
                         ? "border-red-500 text-red-500 bg-red-50"
