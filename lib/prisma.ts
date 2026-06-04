@@ -1,7 +1,7 @@
 import "dotenv/config";
 import pg from "pg"; // <-- Заавал pg багцаас pool-ээ оруулж ирэх ёстой
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@/app/generated/prisma"; // Скима дээр заасан зөв зам руугаа чиглүүлнэ
+import { PrismaClient } from "@prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 
