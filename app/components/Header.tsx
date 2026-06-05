@@ -54,10 +54,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="w-full h-17 bg-black">
+    <header className="w-full h-17 bg-black fixed top-0 left-0 w-full z-50">
       <Container className="h-full">
         <div className="flex h-full items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer">
+          <div
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <img src="/Logo.svg" alt="logo" className="h-[37.29px] w-[46px]" />
             <div className="flex flex-col justify-center gap-1">
               <img

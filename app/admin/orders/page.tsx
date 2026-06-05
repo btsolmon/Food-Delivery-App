@@ -127,7 +127,10 @@ export default function AdminOrders() {
     <div className="flex min-h-screen bg-[#F8F9FA] text-[#333333] font-sans">
       <aside className="w-[240px] bg-white border-r border-neutral-200 p-6 flex flex-col justify-between shrink-0">
         <div className="space-y-8">
-          <div className="flex items-center gap-3">
+          <div
+            className="flex items-center gap-3 cursor-pointer pl-4"
+            onClick={() => router.push("/")}
+          >
             <img src="/Logo.svg" alt="logo" className="h-[29.18px] w-[36px]" />
             <div>
               <h1 className="font-bold text-base leading-none text-[18px]">
@@ -139,13 +142,13 @@ export default function AdminOrders() {
           <nav className="space-y-6">
             <button
               onClick={() => router.push("/admin")}
-              className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm"
+              className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm cursor-pointer"
             >
               <img src="/DashboardIcon.svg" alt="" /> Food menu
             </button>
             <button
               onClick={() => router.push("/admin/orders")}
-              className="w-full flex items-center gap-[10px] bg-black text-white px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm"
+              className="w-full flex items-center gap-[10px] bg-black text-white px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm cursor-pointer"
             >
               <img src="/TruckIcon.svg" alt="" />
               Orders
@@ -333,7 +336,7 @@ export default function AdminOrders() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm"
+                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm cursor-pointer"
               >
                 Previous
               </button>
@@ -344,7 +347,7 @@ export default function AdminOrders() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all cursor-pointer ${
                         currentPage === page
                           ? "bg-black text-white shadow-md scale-105"
                           : "bg-white text-neutral-500 border border-neutral-100 hover:bg-neutral-50"
@@ -361,7 +364,7 @@ export default function AdminOrders() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm"
+                className="px-4 py-2 text-sm font-medium text-neutral-500 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-all shadow-sm cursor-pointer"
               >
                 Next
               </button>

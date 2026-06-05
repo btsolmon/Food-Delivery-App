@@ -56,7 +56,7 @@ export const AddCategoryModal = ({ isOpen, onClose, onSuccess }: any) => {
             <h2 className="font-bold text-lg">Add new category</h2>
             <button
               onClick={onClose}
-              className=" w-[36px] h-[36px] bg-neutral-100 rounded-3xl"
+              className=" w-[36px] h-[36px] bg-neutral-100 rounded-3xl cursor-pointer"
             >
               ✕
             </button>
@@ -73,7 +73,7 @@ export const AddCategoryModal = ({ isOpen, onClose, onSuccess }: any) => {
           <div className="flex justify-end gap-2">
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-black text-white rounded-lg "
+              className="px-4 py-2 bg-black text-white rounded-lg cursor-pointer"
             >
               Add category
             </button>

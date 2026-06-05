@@ -139,7 +139,7 @@ export function AddDishModal({
         <div className="bg-white rounded-[28px] w-[472px] p-6 shadow-2xl relative">
           <button
             onClick={onClose}
-            className="absolute right-6 top-6 text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors"
+            className="absolute right-6 top-6 text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors cursor-pointer"
           >
             <span className="text-lg">✕</span>
           </button>
@@ -268,7 +268,7 @@ export function AddDishModal({
                         setFile(null);
                         setImagePreview(null);
                       }}
-                      className="absolute top-2 right-2 bg-white/90 text-neutral-800 rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-white transition-colors"
+                      className="absolute top-2 right-2 bg-white/90 text-neutral-800 rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-white transition-colors cursor-pointer"
                     >
                       ✕
                     </button>
@@ -283,7 +283,7 @@ export function AddDishModal({
                 <button
                   type="button"
                   onClick={handleDeleteClick}
-                  className="w-[48px] h-[40px] flex items-center justify-center border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-colors"
+                  className="w-[48px] h-[40px] flex items-center justify-center border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -307,7 +307,7 @@ export function AddDishModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-neutral-900 text-white px-4 py-3 rounded-xl font-medium text-sm hover:bg-black transition-colors min-w-[140px]"
+                className="bg-neutral-900 text-white px-4 py-3 rounded-xl font-medium text-sm hover:bg-black transition-colors min-w-[140px] cursor-pointer"
               >
                 {loading
                   ? "Saving..."

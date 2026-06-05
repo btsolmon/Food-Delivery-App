@@ -147,7 +147,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
           </h2>
           <button
             onClick={onClose}
-            className="text-white border rounded-3xl px-2.5 py-1"
+            className="text-white border rounded-3xl px-2.5 py-1 cursor-pointer"
           >
             ✕
           </button>
@@ -155,13 +155,13 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
         <div className="bg-white h-[44px] p-1 rounded-3xl flex">
           <button
             onClick={() => setActiveTab("Cart")}
-            className={`flex-1 rounded-3xl text-[18px] font-medium transition ${activeTab === "Cart" ? "bg-[#ff5252] text-white" : "text-gray-500"}`}
+            className={`flex-1 rounded-3xl text-[18px] font-medium transition cursor-pointer ${activeTab === "Cart" ? "bg-[#ff5252] text-white" : "text-gray-500"}`}
           >
             Cart
           </button>
           <button
             onClick={() => setActiveTab("Order")}
-            className={`flex-1 rounded-3xl text-[18px] font-medium transition ${activeTab === "Order" ? "bg-[#ff5252] text-white" : "text-gray-500"}`}
+            className={`flex-1 rounded-3xl text-[18px] font-medium transition cursor-pointer ${activeTab === "Order" ? "bg-[#ff5252] text-white" : "text-gray-500"}`}
           >
             Order
           </button>
@@ -214,7 +214,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                         </div>
                         <button
                           onClick={() => removeFromCart(item.name)}
-                          className="text-red-500 border rounded-3xl px-2.5 py-1"
+                          className="text-red-500 border rounded-3xl px-2.5 py-1 cursor-pointer"
                         >
                           ✕
                         </button>
@@ -222,14 +222,14 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                       <div className="flex items-center gap-3 mt-2 text-[18px]">
                         <button
                           onClick={() => updateQuantity(item.name, -1)}
-                          className="px-2"
+                          className="px-2 cursor-pointer"
                         >
                           -
                         </button>
                         <span className="font-bold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.name, 1)}
-                          className="px-2"
+                          className="px-2 cursor-pointer"
                         >
                           +
                         </button>

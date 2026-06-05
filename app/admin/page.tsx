@@ -88,7 +88,10 @@ export default function AdminDashboard() {
       <aside className="w-[240px] bg-white border-r border-neutral-200 p-6 flex flex-col justify-between shrink-0">
         <div className="space-y-8">
           {/* Лого хэсэг */}
-          <div className="flex items-center gap-3">
+          <div
+            className="flex items-center gap-3 cursor-pointer pl-4"
+            onClick={() => router.push("/")}
+          >
             <img src="/Logo.svg" alt="logo" className="h-[29.18px] w-[36px]" />
             <div>
               <h1 className="font-bold text-base leading-none text-[18px]">
@@ -100,7 +103,7 @@ export default function AdminDashboard() {
 
           {/* Навигацийн цэс */}
           <nav className="space-y-6">
-            <button className="w-full flex items-center gap-[10px] bg-black text-white px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm">
+            <button className="w-full flex items-center gap-[10px] bg-black text-white px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm cursor-pointer">
               <span className="text-lg">
                 <img src="/DashboardIcon.svg" alt="" />
               </span>{" "}
@@ -108,7 +111,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => router.push("/admin/orders")}
-              className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm"
+              className="w-full flex items-center gap-[10px] text-neutral-500 hover:bg-neutral-100 px-[40px] py-2.5 rounded-3xl font-medium text-sm transition shadow-sm cursor-pointer"
             >
               <img src="/TruckIcon.svg" alt="" />
               Orders
@@ -125,7 +128,7 @@ export default function AdminDashboard() {
           <div className="flex flex-wrap gap-4 items-center">
             <button
               onClick={() => setActiveTab("All")}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition ${activeTab === "All" ? "bg-red-500 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
+              className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${activeTab === "All" ? "bg-red-500 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
             >
               All Dishes <span className="ml-1 opacity-70">{totalDishes}</span>
             </button>
@@ -133,7 +136,7 @@ export default function AdminDashboard() {
               <button
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold transition ${activeTab === cat.id ? "bg-red-500 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
+                className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${activeTab === cat.id ? "bg-red-500 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
               >
                 {cat.categoryName}{" "}
                 <span className="ml-1 opacity-70">{cat.foods.length}</span>
@@ -142,7 +145,7 @@ export default function AdminDashboard() {
             {/* Шинэ категор нэмэх улаан бөөрөнхий товч */}
             <button
               onClick={() => setIsCategoryModalOpen(true)} // <-- Хоол нэмэх модал биш, Категори нэмэх модал нээнэ
-              className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-lg hover:bg-red-600 transition shadow-sm"
+              className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-lg hover:bg-red-600 transition shadow-sm cursor-pointer"
             >
               +
             </button>
@@ -200,7 +203,7 @@ export default function AdminDashboard() {
                               });
                               setEditingFood(food);
                             }}
-                            className="absolute right-3 bottom-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-red-500 text-sm hover:scale-105 transition"
+                            className="absolute right-3 bottom-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-red-500 text-sm hover:scale-105 transition cursor-pointer"
                           >
                             <img
                               src="/edit.svg"
