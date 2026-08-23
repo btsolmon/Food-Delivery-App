@@ -54,15 +54,19 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="w-full h-17 bg-black fixed top-0 left-0 w-full z-50">
+    <header className="w-full h-16 sm:h-17 bg-black fixed top-0 left-0 z-50">
       <Container className="h-full">
-        <div className="flex h-full items-center justify-between">
+        <div className="flex h-full items-center justify-between gap-2">
           <div
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <img src="/Logo.svg" alt="logo" className="h-[37.29px] w-[46px]" />
-            <div className="flex flex-col justify-center gap-1">
+            <img
+              src="/Logo.svg"
+              alt="logo"
+              className="h-8 w-10 sm:h-[37.29px] sm:w-[46px]"
+            />
+            <div className="hidden sm:flex flex-col justify-center gap-1">
               <img
                 src="/LogoName.svg"
                 alt="logo name"
@@ -72,22 +76,28 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="flex gap-3.5">
+          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
             <button
               onClick={() => setIsAddressModalOpen(true)}
-              className="flex justify-center items-center h-9 bg-white rounded-3xl text-sm px-4 gap-1
-              cursor-pointer"
+              className="flex justify-center items-center h-9 bg-white rounded-3xl text-sm px-2.5 sm:px-4 gap-1
+              cursor-pointer min-w-0"
             >
-              <img src="/LocationIcon.svg" alt="location" className="" />
-              <p className="text-red-500 shrink-0">Delivery address:</p>
-              <p className="text-gray-500 truncate max-w-[150px]">
+              <img src="/LocationIcon.svg" alt="location" className="shrink-0" />
+              <p className="hidden md:block text-red-500 shrink-0">
+                Delivery address:
+              </p>
+              <p className="text-gray-500 truncate max-w-[72px] sm:max-w-[150px]">
                 {address || "Add Location"}
               </p>
-              <img src="/ChevronRight.svg" alt="location" className="" />
+              <img
+                src="/ChevronRight.svg"
+                alt="location"
+                className="hidden sm:block shrink-0"
+              />
             </button>
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative w-9 h-9 bg-white rounded-3xl cursor-pointer flex items-center justify-center"
+              className="relative w-9 h-9 bg-white rounded-3xl cursor-pointer flex items-center justify-center shrink-0"
             >
               <img src="/ShoppingCart.svg" alt="shopping cart" />
               {cartItems.length > 0 && !isCartOpen && (
@@ -98,7 +108,7 @@ export default function Header() {
             </button>
 
             {/* ЗӨВ БҮТЭЦ: Dropdown-ыг товчлуурын дотор биш, гадна нь relative контейнерт хийнэ */}
-            <div className="relative z-[100] ">
+            <div className="relative z-[100] shrink-0">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="w-9 h-9 bg-red-500 rounded-3xl cursor-pointer flex items-center justify-center"

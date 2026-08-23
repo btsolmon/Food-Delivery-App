@@ -83,9 +83,31 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8F9FA] text-[#333333] font-sans">
-      {/* 1. ЗҮҮН ТАЛЫН SIDEBAR */}
-      <aside className="w-[240px] bg-white border-r border-neutral-200 p-6 flex flex-col justify-between shrink-0">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8F9FA] text-[#333333] font-sans">
+      {/* 1. Гар утасны дээд цэс */}
+      <div className="md:hidden sticky top-0 z-40 bg-white border-b border-neutral-200 px-4 py-3 flex items-center justify-between gap-3">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => router.push("/")}
+        >
+          <img src="/Logo.svg" alt="logo" className="h-7 w-8" />
+          <span className="font-bold text-sm">NomNom</span>
+        </div>
+        <div className="flex gap-2">
+          <button className="bg-black text-white px-3 py-1.5 rounded-3xl text-xs font-medium">
+            Food menu
+          </button>
+          <button
+            onClick={() => router.push("/admin/orders")}
+            className="bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-3xl text-xs font-medium"
+          >
+            Orders
+          </button>
+        </div>
+      </div>
+
+      {/* 2. ЗҮҮН ТАЛЫН SIDEBAR */}
+      <aside className="hidden md:flex w-[240px] bg-white border-r border-neutral-200 p-6 flex-col justify-between shrink-0">
         <div className="space-y-8">
           {/* Лого хэсэг */}
           <div
@@ -120,10 +142,10 @@ export default function AdminDashboard() {
         </div>
       </aside>
 
-      {/* 2. БАГАНА: ҮНДСЭН КОНТЕНТ */}
-      <main className="flex-1 p-8 space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
+      {/* 3. БАГАНА: ҮНДСЭН КОНТЕНТ */}
+      <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
         {/* Дээд талын категорын таб хэсэг */}
-        <div className="bg-white p-6 rounded-2xl border border-neutral-100 space-y-4 shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-neutral-100 space-y-4 shadow-sm">
           <h2 className="font-bold text-lg">Dishes category</h2>
           <div className="flex flex-wrap gap-4 items-center">
             <button

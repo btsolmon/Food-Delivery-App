@@ -22,7 +22,7 @@ export const UserDropdown = ({ onClose }: any) => {
   };
 
   return (
-    <div className="absolute top-12 right-0 bg-white shadow-xl rounded-xl p-4 text-black z-[999] flex flex-col gap-2">
+    <div className="absolute top-12 right-0 bg-white shadow-xl rounded-xl p-4 text-black z-[999] flex flex-col gap-2 min-w-[160px] max-w-[calc(100vw-2rem)]">
       <p className="text-sm font-bold truncate w-full text-center">
         {email || "user@example.com"}
       </p>

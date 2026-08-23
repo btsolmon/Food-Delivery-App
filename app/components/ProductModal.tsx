@@ -21,17 +21,26 @@ export const ProductModal = ({
       <div className="fixed inset-0 bg-black/50 z-[200]" onClick={onClose} />
 
       {/* Цонхны гол хэсэг */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-3xl w-[700px] z-[201] flex gap-6">
+      <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white p-4 sm:p-6 rounded-3xl w-auto sm:w-[700px] max-h-[calc(100vh-2rem)] overflow-y-auto z-[201] flex flex-col sm:flex-row gap-4 sm:gap-6">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 sm:hidden w-8 h-8 bg-neutral-100 rounded-full text-neutral-500"
+          aria-label="Close"
+        >
+          ✕
+        </button>
         <img
           src={product.image}
-          className="w-[300px] h-[300px] object-cover rounded-2xl"
+          className="w-full h-52 sm:w-[300px] sm:h-[300px] object-cover rounded-2xl shrink-0"
         />
-        <div className="flex-1 flex flex-col gap-4">
-          <h2 className="text-2xl font-bold text-red-500">{product.name}</h2>
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-red-500 pr-8 sm:pr-0">
+            {product.name}
+          </h2>
           <p className="text-gray-600 text-sm">{product.description}</p>
 
           <div className="mt-auto text-black">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-end gap-3">
               <div>
                 <p className="text-sm">Total price</p>
                 <p className="text-xl font-bold">{product.price}</p>

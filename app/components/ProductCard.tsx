@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <>
       <article
-        className="flex flex-col gap-5 rounded-[20px] bg-white p-4 cursor-pointer hover:scale-105 transition duration-300 "
+        className="flex flex-col gap-4 sm:gap-5 rounded-[20px] bg-white p-3 sm:p-4 cursor-pointer sm:hover:scale-105 transition duration-300"
         onClick={() => setIsModalOpen(true)}
       >
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
@@ -67,10 +67,10 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2.5">
-            <h3 className="flex-1 text-[24px] font-semibold leading-8 tracking-tight text-red-500">
+            <h3 className="flex-1 text-[20px] sm:text-[24px] font-semibold leading-7 sm:leading-8 tracking-tight text-red-500 min-w-0">
               {product.name}
             </h3>
-            <span className="text-[18px] font-semibold leading-7 text-black">
+            <span className="text-base sm:text-[18px] font-semibold leading-7 text-black shrink-0">
               {product.price}
             </span>
           </div>

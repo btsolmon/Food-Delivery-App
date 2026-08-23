@@ -50,8 +50,8 @@ export const AddCategoryModal = ({ isOpen, onClose, onSuccess }: any) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-2xl w-[460px] space-y-7">
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white p-6 rounded-2xl w-full max-w-[460px] space-y-7">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-lg">Add new category</h2>
             <button

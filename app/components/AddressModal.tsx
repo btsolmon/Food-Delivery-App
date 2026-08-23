@@ -48,10 +48,10 @@ export const AddressModal = ({ onClose }: any) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 text-black">
-        <div className="bg-white p-6 rounded-2xl w-[460px] space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="font-bold text-lg">
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 text-black p-4">
+        <div className="bg-white p-5 sm:p-6 rounded-2xl w-full max-w-[460px] space-y-4">
+          <div className="flex justify-between items-center gap-3">
+            <h2 className="font-bold text-base sm:text-lg">
               Please write your delivery address!
             </h2>
 

@@ -124,8 +124,29 @@ export default function AdminOrders() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8F9FA] text-[#333333] font-sans">
-      <aside className="w-[240px] bg-white border-r border-neutral-200 p-6 flex flex-col justify-between shrink-0">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8F9FA] text-[#333333] font-sans">
+      <div className="md:hidden sticky top-0 z-40 bg-white border-b border-neutral-200 px-4 py-3 flex items-center justify-between gap-3">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => router.push("/")}
+        >
+          <img src="/Logo.svg" alt="logo" className="h-7 w-8" />
+          <span className="font-bold text-sm">NomNom</span>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => router.push("/admin")}
+            className="bg-neutral-100 text-neutral-600 px-3 py-1.5 rounded-3xl text-xs font-medium"
+          >
+            Food menu
+          </button>
+          <button className="bg-black text-white px-3 py-1.5 rounded-3xl text-xs font-medium">
+            Orders
+          </button>
+        </div>
+      </div>
+
+      <aside className="hidden md:flex w-[240px] bg-white border-r border-neutral-200 p-6 flex-col justify-between shrink-0">
         <div className="space-y-8">
           <div
             className="flex items-center gap-3 cursor-pointer pl-4"
@@ -157,9 +178,9 @@ export default function AdminOrders() {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
-        <div className="bg-white p-8 rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
-          <div className="flex items-center justify-between">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
+        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className=" ml-4 mb-6">
               <h1 className="text-2xl font-bold">Orders</h1>
               <span className="text-sm text-neutral-500">
@@ -373,8 +394,8 @@ export default function AdminOrders() {
         </div>
       </main>
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-2xl shadow-xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
               <p className="text-[14px] font-bold">Change delivery state</p>{" "}
               <button
@@ -384,7 +405,7 @@ export default function AdminOrders() {
                 <span className="text-lg">✕</span>
               </button>
             </div>
-            <div className="flex gap-3 mb-8 text-[12px]">
+            <div className="flex flex-wrap gap-3 mb-8 text-[12px]">
               {["DELIVERED", "PENDING", "CANCELED"].map((status) => (
                 <button
                   key={status}

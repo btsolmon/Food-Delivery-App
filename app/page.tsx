@@ -7,7 +7,7 @@ import { Menu } from "./components/Menu";
 
 export default function Home() {
   return (
-    <div className="bg-[#18181b]">
+    <div className="bg-[#18181b] overflow-x-hidden">
       <Header></Header>
       <Hero></Hero>
       <Menu></Menu>

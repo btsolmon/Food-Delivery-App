@@ -140,7 +140,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
     <>
       <div className="fixed inset-0 bg-black/50 z-[100]" onClick={onClose} />
 
-      <div className="fixed top-0 right-0 h-full w-[535px] bg-[#333333] z-[101] p-5 shadow-2xl flex flex-col gap-[24px] rounded-l-2xl">
+      <div className="fixed top-0 right-0 h-full w-full sm:w-[535px] max-w-full bg-[#333333] z-[101] p-4 sm:p-5 shadow-2xl flex flex-col gap-4 sm:gap-[24px] rounded-none sm:rounded-l-2xl overflow-hidden">
         <div className="flex justify-between">
           <h2 className="text-white text-[20px] font-semibold flex gap-3">
             <img src="/ShoppingCartWhite.svg" alt="cart" /> Order detail
@@ -200,12 +200,12 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                   >
                     <img
                       src={item.image}
-                      className="w-[124px] h-[120px] rounded-xl object-cover"
+                      className="w-20 h-20 sm:w-[124px] sm:h-[120px] rounded-xl object-cover shrink-0"
                     />
-                    <div className="flex-1 flex flex-col gap-5">
+                    <div className="flex-1 flex flex-col gap-3 sm:gap-5 min-w-0">
                       <div className="flex justify-between items-start">
                         <div className="flex flex-col">
-                          <h4 className="font-bold text-[16px] text-red-500">
+                          <h4 className="font-bold text-[16px] text-red-500 truncate">
                             {item.name}
                           </h4>
                           <p className="text-[12px] line-clamp-2">
@@ -362,7 +362,7 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
         {/* 3. PAYMENT INFO (Динамик үнийн дүнтэй) */}
         {activeTab === "Cart" && (
-          <div className="bg-white text-gray-500 rounded-3xl p-6">
+          <div className="bg-white text-gray-500 rounded-3xl p-4 sm:p-6 shrink-0">
             <h3 className="font-bold mb-4 text-[20px]">Payment info</h3>
             <div className="space-y-2 text-[16px]">
               <div className="flex justify-between">
@@ -404,8 +404,8 @@ export const CartDrawer = ({ onClose }: { onClose: () => void }) => {
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 animate-in fade-in duration-300">
-          <div className="bg-white p-10 rounded-xl shadow-2xl flex flex-col items-center justify-center text-center gap-6 animate-in zoom-in duration-300">
-            <h1 className="text-[24px] font-bold text-black">
+          <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl flex flex-col items-center justify-center text-center gap-6 animate-in zoom-in duration-300 mx-4 max-w-lg">
+            <h1 className="text-lg sm:text-[24px] font-bold text-black">
               Your order has been successfully placed!
             </h1>
             <img

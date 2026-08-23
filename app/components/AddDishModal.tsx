@@ -136,7 +136,7 @@ export function AddDishModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-[28px] w-[472px] p-6 shadow-2xl relative">
+        <div className="bg-white rounded-[28px] w-full max-w-[472px] p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
           <button
             onClick={onClose}
             className="absolute right-6 top-6 text-neutral-400 hover:text-black w-8 h-8 flex items-center justify-center bg-neutral-100 rounded-full transition-colors cursor-pointer"
@@ -150,7 +150,7 @@ export function AddDishModal({
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Dish Name */}
-            <div className="grid grid-cols-[110px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2 sm:gap-4">
               <label className="text-[12px] font-medium text-neutral-400">
                 Dish name
               </label>
@@ -165,7 +165,7 @@ export function AddDishModal({
             </div>
 
             {/* Dish Category (СОНГОДОГ БОЛГОЖ ЗАСАВ) */}
-            <div className="grid grid-cols-[110px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2 sm:gap-4">
               <label className="text-[12px] font-medium text-neutral-400">
                 Dish category
               </label>
@@ -196,8 +196,8 @@ export function AddDishModal({
             </div>
 
             {/* Ingredients */}
-            <div className="grid grid-cols-[110px_1fr] items-start gap-4">
-              <label className="text-[12px] font-medium text-neutral-400 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-start gap-2 sm:gap-4">
+              <label className="text-[12px] font-medium text-neutral-400 sm:pt-2">
                 Ingredients
               </label>
               <textarea
@@ -210,7 +210,7 @@ export function AddDishModal({
             </div>
 
             {/* Price */}
-            <div className="grid grid-cols-[110px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2 sm:gap-4">
               <label className="text-[12px] font-medium text-neutral-400">
                 Price
               </label>
@@ -231,8 +231,8 @@ export function AddDishModal({
             </div>
 
             {/* Image */}
-            <div className="grid grid-cols-[110px_1fr] items-start gap-4">
-              <label className="text-[12px] font-medium text-neutral-400 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-start gap-2 sm:gap-4">
+              <label className="text-[12px] font-medium text-neutral-400 sm:pt-2">
                 Image
               </label>
               <div className="relative w-full h-36 bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden group">
